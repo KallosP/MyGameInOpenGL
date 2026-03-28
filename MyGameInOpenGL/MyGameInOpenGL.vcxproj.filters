@@ -25,4 +25,15 @@
   <ItemGroup>
     <Text Include="Notes.md" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shader.vs" />
+  </ItemGroup>
 </Project>
