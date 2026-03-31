@@ -53,6 +53,7 @@
   - a uniform = a global variable applied to a shader
   - GLSL has a built-in mat4 keyword (for matrix)
 - Geometric (transformation) matrix = a matrix that stores info about translation, rotation, etc.
+    - **Several transformation matrices are usually re-created w/ new values every frame to render scenes** 
 - **Understanding the Camera and it's viewpoint**
   - **Model Transform (object -> world space)**
     - Transforms objects into world space 
@@ -82,3 +83,6 @@
 - OpenGL Functions Clarification
   - glUniformMatrix4fv 
     - all this function is doing is **taking the matrix that you define in your code (on the CPU) and transferring it to the GPU** by storing it into a mat4 variable you define in the GLSL code in your shader program (e.g. vertex shader, fragment shader)
+- Accessing Texture object in fragment shader
+    - use a sampler 
+        - is a built-in GLSL data type that represents a texture object (e.g. sampler1D, sampler2D, sampler3D)
