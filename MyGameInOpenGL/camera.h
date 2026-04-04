@@ -110,6 +110,10 @@ public:
             Zoom = 45.0f;
     }
 
+    float getDefaultSpeed() {
+		return SPEED;
+    }
+
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors()

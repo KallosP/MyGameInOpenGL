@@ -50,6 +50,7 @@ int main()
         glfwTerminate();
         return -1;
     }
+    glfwSetWindowPos(window, 560, 240); // set window pos 
     glfwMakeContextCurrent(window);
 	// Register the callback function to adjust the viewport when the window is resized
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -272,6 +273,10 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        camera.MovementSpeed = 10.0f;
+    else
+        camera.MovementSpeed = camera.getDefaultSpeed();
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
