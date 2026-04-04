@@ -141,6 +141,7 @@
     <Text Include="Notes.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="shader.h" />
