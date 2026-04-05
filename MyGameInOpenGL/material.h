@@ -1,3 +1,6 @@
+#ifndef MATERIAL_H
+#define MATERIAL_H
+
 #include "config.h"
 
 class Material {
@@ -8,3 +11,5 @@ class Material {
     private:
         unsigned int texture; // acts like an ID number
 };
+
+#endif // MATERIAL_H

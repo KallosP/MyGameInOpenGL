@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\model">
+      <UniqueIdentifier>{8a27c9e4-370f-4de2-b71e-8b09d6ae9350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\view">
+      <UniqueIdentifier>{7874ecdf-dd63-41f3-8d54-d2eaf49a4c52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller">
+      <UniqueIdentifier>{c7575c9a-fe0f-4343-9afa-383f2f9eed43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{41edd579-744e-4e36-8380-85d5e5b5d29b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,39 +33,54 @@
     <ClCompile Include="stb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="material.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="app.cpp">
+      <Filter>Source Files\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="cube.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
+    <ClCompile Include="cube_mesh.cpp">
+      <Filter>Source Files\view</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Notes.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="camera.h">
+      <Filter>Source Files\model</Filter>
     </ClInclude>
     <ClInclude Include="material.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="shader.h">
+      <Filter>Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="stb_image.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="cube.h">
+      <Filter>Source Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="cube_mesh.h">
+      <Filter>Source Files\view</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.fs">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="shader.vs">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +88,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="..\..\..\..\Desktop\container.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source.gif">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="water.gif">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -132,6 +132,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="app.cpp" />
+    <ClCompile Include="cube.cpp" />
+    <ClCompile Include="cube_mesh.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
@@ -141,8 +144,10 @@
     <Text Include="Notes.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="app.h" />
     <ClInclude Include="camera.h" />
-    <ClInclude Include="config.h" />
+    <ClInclude Include="cube.h" />
+    <ClInclude Include="cube_mesh.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
@@ -154,6 +159,8 @@
   <ItemGroup>
     <Image Include="..\..\..\..\Desktop\awesomeface.png" />
     <Image Include="..\..\..\..\Desktop\container.jpg" />
+    <Image Include="source.gif" />
+    <Image Include="water.gif" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
