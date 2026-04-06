@@ -1,11 +1,11 @@
 #pragma once
 #include "config.h"
 
-class CubeMesh {
+class GroundMesh {
 	public:
-		CubeMesh();
+		GroundMesh();
 		void draw();
-		~CubeMesh();
+		~GroundMesh();
 	private:
 		unsigned int VBO, VAO, EBO;
 };

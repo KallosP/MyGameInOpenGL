@@ -1,17 +1,17 @@
-#ifndef CUBE_H
-#define CUBE_H
+#ifndef GROUND_H
+#define GROUND_H
 #include "config.h"
-#include "camera.h"
 #include "material.h"
-#include "cube_mesh.h"
+#include "ground_mesh.h"
 #include "shader.h"
+#include "camera.h"
 
-class Cube {
+class Ground {
 	public:
-		CubeMesh* cubeMesh;
+		GroundMesh* groundMesh;
 		Material* material;
 		Material* mask;
-		Cube(const char* textureMaterialSrc, const char* textureMaskSrc = NULL);
+		Ground(const char* textureMaterialSrc, const char* textureMaskSrc = NULL);
 		void draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SCR_HEIGHT);
 	private: 
 };

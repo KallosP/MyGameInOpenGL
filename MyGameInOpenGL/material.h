@@ -1,6 +1,5 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
-
 #include "config.h"
 
 class Material {

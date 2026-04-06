@@ -1,15 +1,15 @@
 #include "app.h"
 #include "camera.h"
-#include <iostream>
 #include "shader.h"
 #include "material.h"
 #include "cube.h"
+#include "ground.h"
 
 // settings
-unsigned int SCR_WIDTH = 800; 
-unsigned int SCR_HEIGHT = 600;
+unsigned int SCR_WIDTH = 1920; 
+unsigned int SCR_HEIGHT = 1080;
 // camera
-Camera camera{glm::vec3(0.0f, 0.0f, 3.0f)}; // brace initialization, always treated as variable (fixes vexing parse issue)
+Camera camera{glm::vec3(0.0f, 2.0f, 5.0f)}; // brace initialization, always treated as variable (fixes vexing parse issue)
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -32,7 +32,8 @@ void App::run() {
 	shaderProgram.setInt("mask", 1); 
 
 	// Create a cube
-	Cube cube("source.gif", "water.gif");
+	Cube cube("source.gif", "container.jpg");
+	Ground ground("grass.jpg");
 
 	// Render loop (every iteration is called a frame)
 	while (!glfwWindowShouldClose(window)) // checks if GLFW has been instructed to close
@@ -55,20 +56,8 @@ void App::run() {
 		// activate the shader program
 		shaderProgram.use(); 
 
-		cube.material->use(0);
-		cube.mask->use(1);
-		// model matrix
-		glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0,0.0,0.0));
-		shaderProgram.setMat4("model", model);
-		// camera/view transformation
-		glm::mat4 view = camera.GetViewMatrix();
-		shaderProgram.setMat4("view", view);
-		// pass projection matrix to shader (note that in this case it could change every frame)
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		shaderProgram.setMat4("projection", projection);
-
-		cube.draw();
+		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
+		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
 
         // check and call events and swap the buffers
 		glfwSwapBuffers(window); // swaps the color buffer with the back buffer (solves issue of flickering and tearing that's present in a single buffer when it's being rendered)
@@ -93,7 +82,7 @@ void App::initGLFW() {
 		cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 	}
-	glfwSetWindowPos(window, 560, 240); // set window pos 
+	//glfwSetWindowPos(window, 560, 240); // set window pos 
 	glfwMakeContextCurrent(window);
 	// Register the callback function to adjust the viewport when the window is resized
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);

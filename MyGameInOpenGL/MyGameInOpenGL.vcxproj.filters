@@ -48,6 +48,12 @@
     <ClCompile Include="cube_mesh.cpp">
       <Filter>Source Files\view</Filter>
     </ClCompile>
+    <ClCompile Include="ground.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
+    <ClCompile Include="ground_mesh.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Notes.md" />
@@ -74,6 +80,15 @@
     <ClInclude Include="cube_mesh.h">
       <Filter>Source Files\view</Filter>
     </ClInclude>
+    <ClInclude Include="ground.h">
+      <Filter>Source Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="ground_mesh.h">
+      <Filter>Source Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.fs">
@@ -94,6 +109,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="water.gif">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="grass.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
