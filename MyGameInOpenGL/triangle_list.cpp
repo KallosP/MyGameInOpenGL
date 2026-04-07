@@ -38,7 +38,6 @@ void TriangleList::CreateGLState()
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	// TODO: left off at 16:06 (step 5) https://youtu.be/xoqESu9iOUE?list=PLA0dXqQjCx0S9qG5dWLsheiCJV-_eLUM0
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
@@ -59,15 +58,16 @@ void TriangleList::PopulateBuffers(const BaseTerrain* pTerrain)
 
 	InitVertices(pTerrain, Vertices);
 
-	//std::vector<unsigned int> Indices;
-	//int NumQuads = (m_width - 1) * (m_depth - 1);
-	//Indices.resize(NumQuads * 6);
-	//InitIndices(Indices);
+	std::vector<unsigned int> Indices;
+	int NumQuads = (m_width - 1) * (m_depth - 1); // num quads in the grid (draw this out on paper if confused)
+	Indices.resize(NumQuads * 6); // each quad is 2 triangles, each triangle is 3 vertices, so 6 total per quad. NumQuads * 6 = total number of vertices which = num indices
+	InitIndices(Indices);
 
 	// Called once vertices is populated with vertex data
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices[0]) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
 
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices[0]) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
+	// Upload the indices into the index buffer (EBO)
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices[0]) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
 }
 
 
@@ -75,10 +75,9 @@ void TriangleList::Vertex::InitVertex(const BaseTerrain* pTerrain, int x, int z)
 {
 	float y = pTerrain->GetHeight(x, z);
 
-	//float WorldScale = pTerrain->GetWorldScale();
+	float WorldScale = pTerrain->GetWorldScale();
 
-	//Pos = Vector3f(x * WorldScale, y, z * WorldScale);
-	Pos = glm::vec3(x, y, z);
+	Pos = glm::vec3(x * WorldScale, y, z * WorldScale);
 }
 
 
@@ -100,45 +99,49 @@ void TriangleList::InitVertices(const BaseTerrain* pTerrain, std::vector<Vertex>
 }
 
 
-//void TriangleList::InitIndices(std::vector<unsigned int>& Indices)
-//{
-//	int Index = 0;
-//
-//	for (int z = 0; z < m_depth - 1; z++) {
-//		for (int x = 0; x < m_width - 1; x++) {
-//			unsigned int IndexBottomLeft = z * m_width + x;
-//			unsigned int IndexTopLeft = (z + 1) * m_width + x;
-//			unsigned int IndexTopRight = (z + 1) * m_width + x + 1;
-//			unsigned int IndexBottomRight = z * m_width + x + 1;
-//
-//			// Add top left triangle
-//            assert(Index < Indices.size());
-//			Indices[Index++] = IndexBottomLeft;
-//            assert(Index < Indices.size());
-//			Indices[Index++] = IndexTopLeft;
-//            assert(Index < Indices.size());
-//			Indices[Index++] = IndexTopRight;
-//
-//			// Add bottom right triangle
-//            assert(Index < Indices.size());
-//			Indices[Index++] = IndexBottomLeft;
-//            assert(Index < Indices.size());
-//			Indices[Index++] = IndexTopRight;
-//            assert(Index < Indices.size());
-//			Indices[Index++] = IndexBottomRight;
-//		}
-//	}
-//
-//    assert(Index == Indices.size());
-//}
+void TriangleList::InitIndices(std::vector<unsigned int>& Indices)
+{
+	int Index = 0;
+
+	// iterate through every quad
+	for (int z = 0; z < m_depth - 1; z++) {
+		for (int x = 0; x < m_width - 1; x++) {
+			// calculate the index of the 4 corners of the current quad from just the bottom left vertex of the current quad 
+			// indices will increase from left to right on the grid, reading it from bottom to top, draw on paper if needed
+			// --------------------------------------------------------
+			unsigned int IndexBottomLeft = z * m_width + x;
+			unsigned int IndexTopLeft = (z + 1) * m_width + x;
+			unsigned int IndexTopRight = (z + 1) * m_width + x + 1;
+			unsigned int IndexBottomRight = z * m_width + x + 1;
+
+			// Add top left triangle
+            assert(Index < Indices.size());
+			Indices[Index++] = IndexBottomLeft;
+            assert(Index < Indices.size());
+			Indices[Index++] = IndexTopLeft;
+            assert(Index < Indices.size());
+			Indices[Index++] = IndexTopRight;
+
+			// Add bottom right triangle
+            assert(Index < Indices.size());
+			Indices[Index++] = IndexBottomLeft;
+            assert(Index < Indices.size());
+			Indices[Index++] = IndexTopRight;
+            assert(Index < Indices.size());
+			Indices[Index++] = IndexBottomRight;
+		}
+	}
+
+    assert(Index == Indices.size());
+}
 
 
 void TriangleList::Render()
 {
 	glBindVertexArray(VAO);
 
-	//glDrawElements(GL_TRIANGLES, (m_depth - 1) * (m_width - 1) * 6, GL_UNSIGNED_INT, NULL);
-	glDrawArrays(GL_POINTS, 0, m_width * m_depth);
+	int numIndices = (m_depth - 1) * (m_width - 1) * 6; // num quads * 6 indices per quad
+	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, NULL);
 
 	glBindVertexArray(0);
 }

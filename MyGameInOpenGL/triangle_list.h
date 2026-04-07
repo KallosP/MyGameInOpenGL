@@ -33,7 +33,7 @@ private:
 
 	void PopulateBuffers(const BaseTerrain* pTerrain);
 	void InitVertices(const BaseTerrain* pTerrain, std::vector<Vertex>& Vertices);
-	//void InitIndices(std::vector<uint>& Indices);
+	void InitIndices(std::vector<unsigned int>& Indices);
 
 	int m_width = 0;
 	int m_depth = 0;

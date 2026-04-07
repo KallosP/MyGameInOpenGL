@@ -32,9 +32,14 @@ void App::run() {
 	shaderProgram.setInt("material", 0); // telling GPU which texture slot to sample from (these are uniforms)
 	shaderProgram.setInt("mask", 1); 
 
+	// Initialize the terrain and load the heightmap from a file
 	BaseTerrain terrain;
-	terrain.InitTerrain();
+	float worldScale = 40.0f;
+	terrain.InitTerrain(worldScale);
 	terrain.LoadFromFile("heightmap.save");
+
+	camera.RenderDistance = 5000.0f;
+
 	// Create a cube
 	Cube cube("source.gif", "container.jpg");
 	Ground ground("grass.jpg");
@@ -54,7 +59,7 @@ void App::run() {
 		glfwSetCursorPosCallback(window, mouse_callback);  
 
 		// rendering commands
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the buffer of the depth info from the previous frame 
 
 		// activate the shader program
@@ -120,7 +125,7 @@ void App::processInput()
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		camera.MovementSpeed = 800.0f;
+		camera.MovementSpeed = 300.0f;
 	else
 		camera.MovementSpeed = camera.getDefaultSpeed();
 }

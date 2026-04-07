@@ -1,6 +1,7 @@
 #include "terrain.h"
 
-void BaseTerrain::InitTerrain() {
+void BaseTerrain::InitTerrain(float w) {
+	worldScale = w;
 	terrainShader = Shader("terrain.vs", "terrain.fs");
 	m_VPLoc = glGetUniformLocation(terrainShader.ID, "gVP");
 }
@@ -26,7 +27,7 @@ void BaseTerrain::LoadHeightMapFile(const char* pFilename) {
 
 void BaseTerrain::Render(Camera& camera, float SCR_WIDTH, float SCR_HEIGHT) {
 	// FIXME: this might be wrong
-	glm::mat4 VP = glm::perspective(glm::radians(camera.Zoom), SCR_WIDTH / SCR_HEIGHT, 0.1f, 1000.0f) * camera.GetViewMatrix();
+	glm::mat4 VP = glm::perspective(glm::radians(camera.Zoom), SCR_WIDTH / SCR_HEIGHT, 0.1f, camera.RenderDistance) * camera.GetViewMatrix();
 	terrainShader.use();
 	terrainShader.setMat4("gVP", VP);
 
