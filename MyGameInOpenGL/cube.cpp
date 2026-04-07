@@ -26,7 +26,7 @@ void Cube::draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SC
 	glm::mat4 view = camera.GetViewMatrix();
 	shaderProgram.setMat4("view", view);
 	// pass projection matrix to shader (note that in this case it could change every frame)
-	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), SCR_WIDTH / SCR_HEIGHT, 0.1f, 1000.0f);
 	shaderProgram.setMat4("projection", projection);
 
 	cubeMesh->draw();

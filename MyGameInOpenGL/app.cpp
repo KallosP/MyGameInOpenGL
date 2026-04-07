@@ -4,6 +4,7 @@
 #include "material.h"
 #include "cube.h"
 #include "ground.h"
+#include "terrain.h"
 
 // settings
 unsigned int SCR_WIDTH = 1920; 
@@ -31,6 +32,9 @@ void App::run() {
 	shaderProgram.setInt("material", 0); // telling GPU which texture slot to sample from (these are uniforms)
 	shaderProgram.setInt("mask", 1); 
 
+	BaseTerrain terrain;
+	terrain.InitTerrain();
+	terrain.LoadFromFile("heightmap.save");
 	// Create a cube
 	Cube cube("source.gif", "container.jpg");
 	Ground ground("grass.jpg");
@@ -54,10 +58,11 @@ void App::run() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the buffer of the depth info from the previous frame 
 
 		// activate the shader program
-		shaderProgram.use(); 
+		//shaderProgram.use(); 
+		terrain.Render(camera, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
-		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
-		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
+		//cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
+		//ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
 
         // check and call events and swap the buffers
 		glfwSwapBuffers(window); // swaps the color buffer with the back buffer (solves issue of flickering and tearing that's present in a single buffer when it's being rendered)
@@ -115,7 +120,7 @@ void App::processInput()
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		camera.MovementSpeed = 10.0f;
+		camera.MovementSpeed = 800.0f;
 	else
 		camera.MovementSpeed = camera.getDefaultSpeed();
 }

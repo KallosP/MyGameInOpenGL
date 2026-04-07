@@ -24,7 +24,7 @@ void Ground::draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float 
 	glm::mat4 view = camera.GetViewMatrix();
 	shaderProgram.setMat4("view", view);
 	// pass projection matrix to shader (note that in this case it could change every frame)
-	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
 	shaderProgram.setMat4("projection", projection);
 
 	groundMesh->draw();

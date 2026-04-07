@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="app.cpp" />
+    <ClCompile Include="array_2D.h" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="cube_mesh.cpp" />
     <ClCompile Include="glad.c" />
@@ -141,6 +142,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="stb.cpp" />
+    <ClCompile Include="terrain.cpp" />
+    <ClCompile Include="triangle_list.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Notes.md" />
@@ -154,12 +157,23 @@
     <ClInclude Include="ground.h" />
     <ClInclude Include="ground_mesh.h" />
     <ClInclude Include="material.h" />
+    <ClCompile Include="read_files.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClInclude Include="read_files.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="terrain.h" />
+    <ClInclude Include="triangle_list.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="heightmap.save" />
     <None Include="shader.fs" />
     <None Include="shader.vs" />
+    <None Include="terrain.fs" />
+    <None Include="terrain.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Desktop\awesomeface.png" />

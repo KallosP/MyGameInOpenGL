@@ -25,6 +25,9 @@
     <Filter Include="Source Files\shaders">
       <UniqueIdentifier>{41edd579-744e-4e36-8380-85d5e5b5d29b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{a61fe15f-eb5a-4cbc-9686-5135fa65c06c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -52,6 +55,18 @@
       <Filter>Source Files\model</Filter>
     </ClCompile>
     <ClCompile Include="ground_mesh.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="array_2D.h">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="terrain.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
+    <ClCompile Include="read_files.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="triangle_list.cpp">
       <Filter>Source Files\view</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,12 +104,30 @@
     <ClInclude Include="config.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="terrain.h">
+      <Filter>Source Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="read_files.h">
+      <Filter>Source Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="triangle_list.h">
+      <Filter>Source Files\view</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.fs">
       <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="shader.vs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="heightmap.save">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="terrain.vs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="terrain.fs">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>
