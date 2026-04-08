@@ -1,10 +1,5 @@
 #include "app.h"
-#include "camera.h"
-#include "shader.h"
-#include "material.h"
-#include "cube.h"
-#include "ground.h"
-#include "terrain.h"
+
 
 // settings
 unsigned int SCR_WIDTH = 1920; 
@@ -33,10 +28,17 @@ void App::run() {
 	shaderProgram.setInt("mask", 1); 
 
 	// Initialize the terrain and load the heightmap from a file
-	BaseTerrain terrain;
+	FaultFormationTerrain terrain;
 	float worldScale = 10.0f;
 	terrain.InitTerrain(worldScale);
-	terrain.LoadFromFile("heightmap.save");
+
+	int Size = 256;
+	int Iterations = 500;
+	float MinHeight = 0.0f;
+	float MaxHeight = 300.0f;
+	// lower values = more rugged terrain, higher values = smoother terrain
+	float Filter = 0.1f;
+	terrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
 
 	camera.RenderDistance = 5000.0f;
 

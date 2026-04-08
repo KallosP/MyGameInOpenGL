@@ -32,6 +32,8 @@ class BaseTerrain {
 		Array2D<float> heightMap;
 		TriangleList triangleList;
 		float worldScale = 1.0f;
+		float minHeight = 0.0f;
+		float maxHeight = 0.0f;
 
 		// location of the "VP" uniform variable declared in the GLSL vertex shader code (VP = view-projection matrix)
 		unsigned int m_VPLoc = -1;

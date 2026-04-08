@@ -69,6 +69,9 @@
     <ClCompile Include="triangle_list.cpp">
       <Filter>Source Files\view</Filter>
     </ClCompile>
+    <ClCompile Include="fault_formation_terrain.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Notes.md" />
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="triangle_list.h">
       <Filter>Source Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="fault_formation_terrain.h">
+      <Filter>Source Files\model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,12 @@
 #pragma once
 #include "config.h"
+#include "camera.h"
+#include "shader.h"
+#include "material.h"
+#include "cube.h"
+#include "ground.h"
+#include "terrain.h"
+#include "fault_formation_terrain.h"
 
 using namespace std;
 

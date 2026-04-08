@@ -136,6 +136,7 @@
     <ClCompile Include="array_2D.h" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="cube_mesh.cpp" />
+    <ClCompile Include="fault_formation_terrain.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="ground.cpp" />
     <ClCompile Include="ground_mesh.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="cube_mesh.h" />
+    <ClInclude Include="fault_formation_terrain.h" />
     <ClInclude Include="ground.h" />
     <ClInclude Include="ground_mesh.h" />
     <ClInclude Include="material.h" />
