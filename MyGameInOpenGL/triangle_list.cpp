@@ -77,7 +77,7 @@ void TriangleList::Vertex::InitVertex(const BaseTerrain* pTerrain, int x, int z)
 
 	float WorldScale = pTerrain->GetWorldScale();
 
-	Pos = glm::vec3(x * WorldScale, y, z * WorldScale);
+	Pos = glm::vec3(x * WorldScale, y, -z * WorldScale);
 }
 
 
@@ -114,21 +114,43 @@ void TriangleList::InitIndices(std::vector<unsigned int>& Indices)
 			unsigned int IndexTopRight = (z + 1) * m_width + x + 1;
 			unsigned int IndexBottomRight = z * m_width + x + 1;
 
+			// TODO: gain a better understanding of how exactly the winding order of
+			//       the vertices in the triangles is affected by changing from a left handed
+			//		 coord system to a right handed coord system
+
+			// Left handed coordinate system, counter clockwise winding order
+			// Add top left triangle
+            //assert(Index < Indices.size());
+			//Indices[Index++] = IndexBottomLeft;
+            //assert(Index < Indices.size());
+			//Indices[Index++] = IndexTopLeft;
+            //assert(Index < Indices.size());
+			//Indices[Index++] = IndexTopRight;
+
+			//// Add bottom right triangle
+            //assert(Index < Indices.size());
+			//Indices[Index++] = IndexBottomLeft;
+            //assert(Index < Indices.size());
+			//Indices[Index++] = IndexTopRight;
+            //assert(Index < Indices.size());
+			//Indices[Index++] = IndexBottomRight;
+
+			// Right handed coordinate system, clockwise winding order
 			// Add top left triangle
             assert(Index < Indices.size());
 			Indices[Index++] = IndexBottomLeft;
             assert(Index < Indices.size());
-			Indices[Index++] = IndexTopLeft;
-            assert(Index < Indices.size());
 			Indices[Index++] = IndexTopRight;
+            assert(Index < Indices.size());
+			Indices[Index++] = IndexTopLeft;
 
 			// Add bottom right triangle
             assert(Index < Indices.size());
 			Indices[Index++] = IndexBottomLeft;
             assert(Index < Indices.size());
-			Indices[Index++] = IndexTopRight;
-            assert(Index < Indices.size());
 			Indices[Index++] = IndexBottomRight;
+            assert(Index < Indices.size());
+			Indices[Index++] = IndexTopRight;
 		}
 	}
 

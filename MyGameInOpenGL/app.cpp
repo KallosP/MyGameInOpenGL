@@ -34,7 +34,7 @@ void App::run() {
 
 	// Initialize the terrain and load the heightmap from a file
 	BaseTerrain terrain;
-	float worldScale = 40.0f;
+	float worldScale = 10.0f;
 	terrain.InitTerrain(worldScale);
 	terrain.LoadFromFile("heightmap.save");
 
