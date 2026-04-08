@@ -142,6 +142,7 @@
     <ClCompile Include="ground_mesh.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
+    <ClCompile Include="midpoint_disp_terrain.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="terrain.cpp" />
     <ClCompile Include="triangle_list.cpp" />
@@ -162,6 +163,8 @@
     <ClCompile Include="read_files.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClInclude Include="math.h" />
+    <ClInclude Include="midpoint_disp_terrain.h" />
     <ClInclude Include="read_files.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>

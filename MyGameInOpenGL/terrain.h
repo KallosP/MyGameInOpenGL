@@ -7,6 +7,7 @@
 #include "triangle_list.h"
 #include "camera.h"
 #include "shader.h"
+#include "math.h"
 // stores/renders the heightmap
 
 class BaseTerrain {

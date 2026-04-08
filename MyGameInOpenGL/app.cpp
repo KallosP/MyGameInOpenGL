@@ -5,7 +5,7 @@
 unsigned int SCR_WIDTH = 1920; 
 unsigned int SCR_HEIGHT = 1080;
 // camera
-Camera camera{glm::vec3(0.0f, 2.0f, 5.0f)}; // brace initialization, always treated as variable (fixes vexing parse issue)
+Camera camera{glm::vec3(200.0f, 400.0f, 100.0f)}; // brace initialization, always treated as variable (fixes vexing parse issue)
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -28,17 +28,21 @@ void App::run() {
 	shaderProgram.setInt("mask", 1); 
 
 	// Initialize the terrain and load the heightmap from a file
-	FaultFormationTerrain terrain;
+	//FaultFormationTerrain terrain;
+	MidpointDispTerrain terrain;
 	float worldScale = 10.0f;
 	terrain.InitTerrain(worldScale);
 
-	int Size = 256;
+	int Size = 32;
 	int Iterations = 500;
 	float MinHeight = 0.0f;
 	float MaxHeight = 300.0f;
-	// lower values = more rugged terrain, higher values = smoother terrain
-	float Filter = 0.1f;
-	terrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
+	// lower values = more rugged terrain, higher values = smoother terrain (between 0.0 and 1.0)
+	float Filter = 0.4f;
+	// r > 1 => smoother terrain, r < 1 => more rugged terrain, r = 1 => balanced terrain
+	float Roughness = 2.0f;
+	//terrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
+	terrain.CreateMidpointDisplacement(Size, Roughness, MinHeight, MaxHeight);
 
 	camera.RenderDistance = 5000.0f;
 

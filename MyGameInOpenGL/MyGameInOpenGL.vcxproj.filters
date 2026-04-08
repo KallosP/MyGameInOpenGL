@@ -72,6 +72,9 @@
     <ClCompile Include="fault_formation_terrain.cpp">
       <Filter>Source Files\model</Filter>
     </ClCompile>
+    <ClCompile Include="midpoint_disp_terrain.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Notes.md" />
@@ -118,6 +121,12 @@
     </ClInclude>
     <ClInclude Include="fault_formation_terrain.h">
       <Filter>Source Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="midpoint_disp_terrain.h">
+      <Filter>Source Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>Source Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
