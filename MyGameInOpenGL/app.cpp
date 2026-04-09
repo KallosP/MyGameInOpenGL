@@ -28,23 +28,49 @@ void App::run() {
 	shaderProgram.setInt("mask", 1); 
 
 	// Initialize the terrain and load the heightmap from a file
-	//FaultFormationTerrain terrain;
-	MidpointDispTerrain terrain;
-	float worldScale = 10.0f;
-	terrain.InitTerrain(worldScale);
+	FaultFormationTerrain terrain;
+	//MidpointDispTerrain terrain;
+	float worldScale = 5.0f;
+	float TextureScale = 50.0f;
 
-	int Size = 32;
+	terrain.InitTerrain(worldScale, TextureScale);
+
+	std::vector<Material*> textureMats;
+	Material rock02("rock02_2.jpg");
+	Material rock01("rock01.jpg");
+	Material grass("tilable-IMG_0044-verydark.png");
+	Material snow("snow.png");
+	
+	textureMats.push_back(&rock02);
+	textureMats.push_back(&rock01);
+	textureMats.push_back(&grass);
+	textureMats.push_back(&snow);
+
+
+	int Size = 512;
 	int Iterations = 500;
 	float MinHeight = 0.0f;
-	float MaxHeight = 300.0f;
+	float MaxHeight = 350.0f;
 	// lower values = more rugged terrain, higher values = smoother terrain (between 0.0 and 1.0)
-	float Filter = 0.4f;
+	float Filter = 0.21f;
 	// r > 1 => smoother terrain, r < 1 => more rugged terrain, r = 1 => balanced terrain
-	float Roughness = 2.0f;
-	//terrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
-	terrain.CreateMidpointDisplacement(Size, Roughness, MinHeight, MaxHeight);
+	float Roughness = 0.85f;
+	terrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
+	//terrain.CreateMidpointDisplacement(Size, Roughness, MinHeight, MaxHeight);
+	camera.RenderDistance = 50000.0f;
 
-	camera.RenderDistance = 5000.0f;
+	// generate terrain texture
+	TextureGenerator TexGen;
+	//TODO: add textures once implemented
+	TexGen.LoadTile("rock02_2.jpg");
+	TexGen.LoadTile("rock01.jpg");
+	TexGen.LoadTile("tilable-IMG_0044-verydark.png");
+	TexGen.LoadTile("snow.png");
+	int TextureSize = 1024;
+	// TODO: save the generated texture to a file and return it in GenerateTexture
+	const char* terrainTexSrc = TexGen.GenerateTexture(TextureSize, &terrain, MinHeight, MaxHeight);
+	printf("Generated terrain texture: %s\n", terrainTexSrc);
+	Material terrainMat(terrainTexSrc); // applies texture
 
 	// Create a cube
 	Cube cube("source.gif", "container.jpg");
@@ -65,12 +91,16 @@ void App::run() {
 		glfwSetCursorPosCallback(window, mouse_callback);  
 
 		// rendering commands
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		float r = 66;
+		float g = 167;
+		float b = 245;
+		glClearColor((float) r / 255.0f, (float) g / 255.0f, (float) b / 255.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the buffer of the depth info from the previous frame 
 
 		// activate the shader program
 		//shaderProgram.use(); 
-		terrain.Render(camera, (float)SCR_WIDTH, (float)SCR_HEIGHT);
+		terrain.Render(camera, terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
+		//terrain.Render(camera, terrainMat, rock02, rock01, grass, snow, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
 		//cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
 		//ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
@@ -131,7 +161,7 @@ void App::processInput()
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		camera.MovementSpeed = 300.0f;
+		camera.MovementSpeed = 700.0f;
 	else
 		camera.MovementSpeed = camera.getDefaultSpeed();
 }

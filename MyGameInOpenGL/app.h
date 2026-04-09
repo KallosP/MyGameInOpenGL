@@ -8,6 +8,7 @@
 #include "terrain.h"
 #include "fault_formation_terrain.h"
 #include "midpoint_disp_terrain.h"
+#include "texture_generator.h"
 
 using namespace std;
 

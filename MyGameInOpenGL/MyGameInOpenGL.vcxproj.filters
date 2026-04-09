@@ -75,6 +75,9 @@
     <ClCompile Include="midpoint_disp_terrain.cpp">
       <Filter>Source Files\model</Filter>
     </ClCompile>
+    <ClCompile Include="texture_generator.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Notes.md" />
@@ -128,6 +131,12 @@
     <ClInclude Include="math.h">
       <Filter>Source Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="texture_generator.h">
+      <Filter>Source Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_write.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.fs">
@@ -147,12 +156,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\Desktop\awesomeface.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\..\Desktop\container.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="source.gif">
       <Filter>Resource Files</Filter>
     </Image>
@@ -160,6 +163,18 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="grass.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="rocky.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="dirt.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="snow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="tilable-IMG_0044-verydark.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

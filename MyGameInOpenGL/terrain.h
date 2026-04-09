@@ -8,22 +8,33 @@
 #include "camera.h"
 #include "shader.h"
 #include "math.h"
+#include "material.h"
+#include "stb_image.h"
+#include "stb_image_write.h"
+#include <string.h>
 // stores/renders the heightmap
 
 class BaseTerrain {
 	public:
 		BaseTerrain() {};
 
-		void InitTerrain(float worldScale);
+		void InitTerrain(float worldScale, float TextureScale);
 
-		void Render(Camera& camera, float SCR_WIDTH, float SCR_HEIGHT);
+		void Render(Camera& camera, Material& terrainMat, std::vector<Material*>& textureMats, float SCR_WIDTH, float SCR_HEIGHT);
 		 
 		void LoadFromFile(const char* pFilename); // loads a heightmap from a file
 
 		// fetches the corresponding height value (y) from the provided x,z coordinates
 		float GetHeight(int x, int z) const { return heightMap.Get(x, z); }
 
+		float GetHeightInterpolated(float x, float z) const;
+
+		int GetSize() const { return terrainSize; }
+
 		float GetWorldScale() const { return worldScale; }
+
+		float GetTextureScale() const { return textureScale; }
+
 	protected:
 		void LoadHeightMapFile(const char* pFilename);
 
@@ -33,11 +44,12 @@ class BaseTerrain {
 		Array2D<float> heightMap;
 		TriangleList triangleList;
 		float worldScale = 1.0f;
+		float textureScale = 1.0f;
 		float minHeight = 0.0f;
 		float maxHeight = 0.0f;
 
 		// location of the "VP" uniform variable declared in the GLSL vertex shader code (VP = view-projection matrix)
-		unsigned int m_VPLoc = -1;
+		//unsigned int m_VPLoc = -1;
 		Shader terrainShader;
 };
 

@@ -42,12 +42,17 @@ void TriangleList::CreateGLState()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 	int POS_LOC = 0;
+	int TEX_LOC = 1;
 
 	size_t NumFloats = 0;
 	
 	glEnableVertexAttribArray(POS_LOC);
 	glVertexAttribPointer(POS_LOC, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)(NumFloats * sizeof(float)));
 	NumFloats += 3;
+
+	glEnableVertexAttribArray(TEX_LOC);
+	glVertexAttribPointer(TEX_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)(NumFloats * sizeof(float)));
+	NumFloats += 2;
 }
 
 // Populates the vertex buffer with the positions of the vertices in the grid (where grid = the terrain)
@@ -78,6 +83,12 @@ void TriangleList::Vertex::InitVertex(const BaseTerrain* pTerrain, int x, int z)
 	float WorldScale = pTerrain->GetWorldScale();
 
 	Pos = glm::vec3(x * WorldScale, y, -z * WorldScale);
+
+	float Size = (float)pTerrain->GetSize();
+	float TextureScale = pTerrain->GetTextureScale();
+	// maps the x,z coordinates of the vertex to a value between 0 and 1, 
+	// which is used for texture mapping (e.g. for the grass texture on the terrain)
+	Tex = glm::vec2(TextureScale * (float)x / Size, TextureScale * (float)z / Size); 
 }
 
 

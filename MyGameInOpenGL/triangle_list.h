@@ -25,6 +25,7 @@ private:
 
 	struct Vertex {
 		glm::vec3 Pos;
+		glm::vec2 Tex; // texture
 
 		void InitVertex(const BaseTerrain* pTerrain, int x, int z);
 	};

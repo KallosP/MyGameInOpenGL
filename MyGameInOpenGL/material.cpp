@@ -26,8 +26,11 @@ Material::Material(const char* filename) {
     // configure the sampler (defining how the GPU will read the texture (that is, the texture that is currently bound/binded)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // minifying filter describes how to sample an image when it is shrunk down
+    //TODO: will need to change the filtering method for terrain texture (i.e. add a condition)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // minifying filter describes how to sample an image when it is shrunk down
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // magnifying filter 
+
+    glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 Material::~Material() { // (destructor)

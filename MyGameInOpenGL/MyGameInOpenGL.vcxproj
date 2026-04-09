@@ -145,6 +145,7 @@
     <ClCompile Include="midpoint_disp_terrain.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="terrain.cpp" />
+    <ClCompile Include="texture_generator.cpp" />
     <ClCompile Include="triangle_list.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,7 +171,9 @@
     </ClInclude>
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="terrain.h" />
+    <ClInclude Include="texture_generator.h" />
     <ClInclude Include="triangle_list.h" />
   </ItemGroup>
   <ItemGroup>
@@ -181,10 +184,12 @@
     <None Include="terrain.vs" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\Desktop\awesomeface.png" />
-    <Image Include="..\..\..\..\Desktop\container.jpg" />
+    <Image Include="dirt.jpg" />
     <Image Include="grass.jpg" />
+    <Image Include="rocky.jpg" />
+    <Image Include="snow.png" />
     <Image Include="source.gif" />
+    <Image Include="tilable-IMG_0044-verydark.png" />
     <Image Include="water.gif" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
