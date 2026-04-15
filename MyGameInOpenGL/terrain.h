@@ -20,7 +20,7 @@ class BaseTerrain {
 
 		void InitTerrain(float worldScale, float TextureScale);
 
-		void Render(Camera& camera, Material& terrainMat, std::vector<Material*>& textureMats, float SCR_WIDTH, float SCR_HEIGHT);
+		void Render(Camera& camera, Material& terrainMat, std::vector<std::unique_ptr<Material>>& textureMats, float SCR_WIDTH, float SCR_HEIGHT);
 		 
 		void LoadFromFile(const char* pFilename); // loads a heightmap from a file
 

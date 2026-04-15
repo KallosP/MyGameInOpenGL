@@ -1,23 +1,57 @@
 #include "app.h"
 
-
 // settings
+// --------------
 unsigned int SCR_WIDTH = 1920; 
 unsigned int SCR_HEIGHT = 1080;
+// background
+// ----------
+float r = 66;
+float g = 167;
+float b = 245;
 // camera
+// -------------
 Camera camera{glm::vec3(200.0f, 400.0f, 100.0f)}; // brace initialization, always treated as variable (fixes vexing parse issue)
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+float camSpeed = 75.0f;
+float camBoost = 700.0f;
 // timing
+// ------------
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
+// terrain settings
+// ----------------
+int Size = 512;
+int Iterations = 500;
+float MinHeight = 0.0f;
+float MaxHeight = 350.0f;
+// lower values = more rugged terrain, higher values = smoother terrain (between 0.0 and 1.0)
+float Filter = 0.21f;
+// r > 1 => smoother terrain, r < 1 => more rugged terrain, r = 1 => balanced terrain
+float Roughness = 0.85f;
+float WorldScale = 5.0f;
+float TextureScale = 50.0f;
+
+
+std::vector<const char*> terrainTextures = {"rock02_2.jpg", "rock01.jpg", "tilable-IMG_0044-verydark.png", "snow.png"};
+
+enum class TerrainType {
+    FaultFormation,
+    Midpoint
+};
 
 
 App::App() {
 	// Initialize GLFW and GLAD
     initGLFW();
+	initImGui();
 }
+
+// TODO: 
+// - Add a GUI to edit terrain on the fly
+// - CLEAN UP AND UNDERSTAND YOUR CODE BEFORE MOVING ON	(rewatch tutorial series if needed)
 
 void App::run() {
 	Shader shaderProgram("shader.vs", "shader.fs");
@@ -27,50 +61,13 @@ void App::run() {
 	shaderProgram.setInt("material", 0); // telling GPU which texture slot to sample from (these are uniforms)
 	shaderProgram.setInt("mask", 1); 
 
-	// Initialize the terrain and load the heightmap from a file
-	FaultFormationTerrain terrain;
-	//MidpointDispTerrain terrain;
-	float worldScale = 5.0f;
-	float TextureScale = 50.0f;
-
-	terrain.InitTerrain(worldScale, TextureScale);
-
-	std::vector<Material*> textureMats;
-	Material rock02("rock02_2.jpg");
-	Material rock01("rock01.jpg");
-	Material grass("tilable-IMG_0044-verydark.png");
-	Material snow("snow.png");
-	
-	textureMats.push_back(&rock02);
-	textureMats.push_back(&rock01);
-	textureMats.push_back(&grass);
-	textureMats.push_back(&snow);
-
-
-	int Size = 512;
-	int Iterations = 500;
-	float MinHeight = 0.0f;
-	float MaxHeight = 350.0f;
-	// lower values = more rugged terrain, higher values = smoother terrain (between 0.0 and 1.0)
-	float Filter = 0.21f;
-	// r > 1 => smoother terrain, r < 1 => more rugged terrain, r = 1 => balanced terrain
-	float Roughness = 0.85f;
-	terrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
+	auto textureMats = setupTerrainTextures(terrainTextures);
+	faultFormTerrain.InitTerrain(WorldScale, TextureScale);
+	//BaseTerrain terrain = setUpTerrain(Size, Iterations, MinHeight, MaxHeight, Filter, Roughness);
+	faultFormTerrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
 	//terrain.CreateMidpointDisplacement(Size, Roughness, MinHeight, MaxHeight);
-	camera.RenderDistance = 50000.0f;
 
-	// generate terrain texture
-	TextureGenerator TexGen;
-	//TODO: add textures once implemented
-	TexGen.LoadTile("rock02_2.jpg");
-	TexGen.LoadTile("rock01.jpg");
-	TexGen.LoadTile("tilable-IMG_0044-verydark.png");
-	TexGen.LoadTile("snow.png");
-	int TextureSize = 1024;
-	// TODO: save the generated texture to a file and return it in GenerateTexture
-	const char* terrainTexSrc = TexGen.GenerateTexture(TextureSize, &terrain, MinHeight, MaxHeight);
-	printf("Generated terrain texture: %s\n", terrainTexSrc);
-	Material terrainMat(terrainTexSrc); // applies texture
+	Material* terrainMat = new Material(createTerrainTexSrc(faultFormTerrain, terrainTextures));
 
 	// Create a cube
 	Cube cube("source.gif", "container.jpg");
@@ -79,31 +76,86 @@ void App::run() {
 	// Render loop (every iteration is called a frame)
 	while (!glfwWindowShouldClose(window)) // checks if GLFW has been instructed to close
 	{
-		// input
-		processInput(); // checks for user input (e.g. keyboard input)
-
 		// per-frame time logic
 		// --------------------
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		glfwSetCursorPosCallback(window, mouse_callback);  
+		// Now check if ImGui wants input
+		ImGuiIO& io = ImGui::GetIO();
+		if (!io.WantCaptureMouse && !io.WantCaptureKeyboard) {
+			// input
+			processInput(); // checks for user input (e.g. keyboard input)
+		}
 
 		// rendering commands
-		float r = 66;
-		float g = 167;
-		float b = 245;
 		glClearColor((float) r / 255.0f, (float) g / 255.0f, (float) b / 255.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the buffer of the depth info from the previous frame 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the buffer of the depth info from the previous frame
+
+		// Setup ImGui frame 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
 		// activate the shader program
 		//shaderProgram.use(); 
-		terrain.Render(camera, terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 		//terrain.Render(camera, terrainMat, rock02, rock01, grass, snow, (float)SCR_WIDTH, (float)SCR_HEIGHT);
+		//if (firstRender) {
+		//	terrain.Render(camera, terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
+		//	firstRender = false;
+		//}
+
+		faultFormTerrain.Render(camera, *terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
 		//cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
 		//ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
+
+		// imgui
+		if (showImGui) {
+			ImGui::Begin("Settings");
+			ImGui::Text("Camera");
+			ImGui::SliderFloat("Speed", &camSpeed, 0.0f, 10000.0f);
+			ImGui::SliderFloat("Boost", &camBoost, 0.0f, 10000.0f);
+			ImGui::Separator();
+
+			ImGui::Text("Sky Color");
+			ImGui::SliderFloat("R", &r, 0.0f, 255.0f);
+			ImGui::SliderFloat("G", &g, 0.0f, 255.0f);
+			ImGui::SliderFloat("B", &b, 0.0f, 255.0f);
+			ImGui::Separator();
+
+			ImGui::Text("Terrain");
+			const char* items[] = { "Fault Formation", "Midpoint" };
+			static int selected = 0;
+			if (ImGui::Combo("Terrain Type", &selected, items, IM_ARRAYSIZE(items))) {
+				// selection changed → rebuild terrain
+				if (selected == 0) {
+					//isFaultFormation = true;
+				}
+				else {
+	
+				}
+			}
+			//ImGui::SliderFloat("WorldScale", &WorldScale, 0.0f, 500.0f);
+			ImGui::SliderInt("Size", &Size, 0, 2048);
+			ImGui::SliderInt("Iterations", &Iterations, 0, 10000);
+			ImGui::SliderFloat("MinHeight", &MinHeight, 0.0f, 500.0f);
+			ImGui::SliderFloat("MaxHeight", &MaxHeight, 0.0f, 500.0f);
+			ImGui::SliderFloat("Filter", &Filter, 0.0f, 0.99f);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("0 = rugged; 1 = smooth");
+			}
+			if (ImGui::Button("Apply")) {
+				//BaseTerrain terrain = setUpTerrain(Size, Iterations, MinHeight, MaxHeight, Filter, Roughness);
+				faultFormTerrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
+				//terrain.CreateMidpointDisplacement(Size, Roughness, MinHeight, MaxHeight);
+			}
+			ImGui::End();
+		}
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // check and call events and swap the buffers
 		glfwSwapBuffers(window); // swaps the color buffer with the back buffer (solves issue of flickering and tearing that's present in a single buffer when it's being rendered)
@@ -113,6 +165,49 @@ void App::run() {
 
 App::~App() {
     glfwTerminate();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+}
+
+const char* App::createTerrainTexSrc(FaultFormationTerrain& terrain, std::vector<const char*> terrainTextures) {
+	// generate terrain texture
+	TextureGenerator TexGen;
+	for (int i = 0; i < terrainTextures.size(); ++i) {
+		TexGen.LoadTile(terrainTextures[i]);
+	}
+	int TextureSize = 1024;
+	// TODO: save the generated texture to a file and return it in GenerateTexture
+	const char* terrainTexSrc = TexGen.GenerateTexture(TextureSize, &terrain, MinHeight, MaxHeight);
+	printf("Generated terrain texture: %s\n", terrainTexSrc);
+	return terrainTexSrc;
+}
+
+std::vector<std::unique_ptr<Material>> App::setupTerrainTextures(std::vector<const char*> textures){ 
+    std::vector<std::unique_ptr<Material>> textureMats;
+	for (int i = 0; i < textures.size(); ++i) {
+		textureMats.push_back(std::make_unique<Material>(textures[i]));
+	}
+    return textureMats;
+}
+
+//BaseTerrain App::setUpTerrain(int Size, int Iterations, float MinHeight, float MaxHeight, float Filter, float Roughness) {
+//	
+//}
+//
+void App::initImGui() {
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+	ImGui::StyleColorsDark();
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 // Initialize GLFW and set the OpenGL version to 3.3
@@ -133,9 +228,12 @@ void App::initGLFW() {
 	// Register the callback function to adjust the viewport when the window is resized
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	//glfwSetScrollCallback(window, scroll_callback);
+	glfwSetKeyCallback(window, esc_key_callback);
 	// tell GLFW to capture our mouse
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, cursorState);
+	// store pointer to the App object in the window object
+	glfwSetWindowUserPointer(window, this);
 
 	// Initialize GLAD (manages function pointers for OpenGL, simplifying the calling of OpenGL functions to what you would expect)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -149,8 +247,6 @@ void App::initGLFW() {
 // ---------------------------------------------------------------------------------------------------------
 void App::processInput()
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
@@ -161,9 +257,9 @@ void App::processInput()
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		camera.MovementSpeed = 700.0f;
+		camera.MovementSpeed = camBoost;
 	else
-		camera.MovementSpeed = camera.getDefaultSpeed();
+		camera.MovementSpeed = camSpeed;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -180,28 +276,49 @@ void App::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // -------------------------------------------------------
 void App::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
+	App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
 
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
+	float xpos = static_cast<float>(xposIn);
+	float ypos = static_cast<float>(yposIn);
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
 
-    lastX = xpos;
-    lastY = ypos;
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-    camera.ProcessMouseMovement(xoffset, yoffset);
+	lastX = xpos;
+	lastY = ypos;
+
+	if (app->cursorState == GLFW_CURSOR_DISABLED) {
+		camera.ProcessMouseMovement(xoffset, yoffset);
+	}
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
-void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+//void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+//{
+//    camera.ProcessMouseScroll(static_cast<float>(yoffset));
+//}
+
+
+void App::esc_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    camera.ProcessMouseScroll(static_cast<float>(yoffset));
+	App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        app->showImGui = !app->showImGui;
+		if (app->cursorState == GLFW_CURSOR_DISABLED) {
+			app->cursorState = GLFW_CURSOR_NORMAL;
+		}
+		else {
+			app->cursorState = GLFW_CURSOR_DISABLED;
+		}
+		glfwSetInputMode(window, GLFW_CURSOR, app->cursorState);
+    }
 }

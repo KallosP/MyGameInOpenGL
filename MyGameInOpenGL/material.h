@@ -4,6 +4,7 @@
 
 class Material {
     public:
+        Material() {}
         Material(const char* filename);
         ~Material(); // destructor (frees up resources)
         void use(int unit);
