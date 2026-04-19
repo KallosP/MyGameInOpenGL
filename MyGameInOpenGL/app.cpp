@@ -11,7 +11,7 @@ float g = 167;
 float b = 245;
 // camera
 // -------------
-Camera camera{glm::vec3(0.0f, 0.0f, 0.0f)}; // brace initialization, always treated as variable (fixes vexing parse issue)
+Camera camera{glm::vec3(0.0f, 2.0f, 5.0f)}; // brace initialization, always treated as variable (fixes vexing parse issue)
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -33,9 +33,6 @@ float Filter = 0.21f;
 float Roughness = 0.85f;
 float WorldScale = 5.0f;
 float TextureScale = 50.0f;
-// objects
-// --------
-// cube
 
 
 std::vector<const char*> terrainTextures = {"rock02_2.jpg", "rock01.jpg", "tilable-IMG_0044-verydark.png", "snow.png"};
@@ -75,14 +72,19 @@ void App::run() {
 	// FIXME: cube is being rendered with terrain textures and game sometimes freezes/crashes
 	//		- potentially a massive memory leak somewhere with how the terrain is being rendered (possibly with Material class)
 
-	// Create a cube
+	// Create cube object
 	Cube cube("source.gif");
 	glm::vec3 c_pos = glm::vec3(0.0f, 2.0f, -0.5f);
+	glm::vec3 c_velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 c_acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 c_size = glm::vec3(1.0f, 1.0f, 1.0f);
 
+	// Create ground object
 	Cube ground("grass.jpg");
 	glm::vec3 g_pos = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 g_size = glm::vec3(100.0f, 1.0f, 100.0f);
+	glm::vec3 g_size = glm::vec3(100.0f, 0.0f, 100.0f);
+
+	glm::vec3 gravity = glm::vec3(0.0f, -9.8f, 0.0f);
 
 
 	// Render loop (every iteration is called a frame)
@@ -120,6 +122,22 @@ void App::run() {
 
 		//faultFormTerrain.Render(camera, *terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
+		// TODO: - make the physics more "game like"
+		//		- fix collision to 
+		// Position equation (applies gravity)
+		c_pos = c_pos + c_velocity * deltaTime + (0.5f * gravity * pow(deltaTime, 2.0f));
+
+		// Basic collision detection
+		float c_half_height = c_size.y * 0.5f;
+		float cube_bottom = c_pos.y - c_half_height;
+
+		float g_half_height = g_size.y * 0.5f;
+		float ground_top = g_pos.y + g_half_height;
+
+		if (cube_bottom <= ground_top) {
+			c_pos.y = c_half_height + ground_top;
+		}
+
 		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, c_pos, c_size);
 		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, g_pos, g_size);
 
@@ -139,6 +157,17 @@ void App::run() {
 				ImGui::Spacing();
 			}
 
+			// Physics
+			if (ImGui::CollapsingHeader("Physics", ImGuiTreeNodeFlags_DefaultOpen)){
+
+				ImGui::Spacing();
+
+				ImGui::Text("Gravity");
+				ImGui::DragFloat("Strength", &gravity.y, 10.0f);
+
+				ImGui::Spacing();
+			}
+
 			// Objects
 			if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen))
 			{
@@ -154,7 +183,7 @@ void App::run() {
 
 				ImGui::Text("Ground");
 				ImGui::DragFloat3("Position##Ground", &g_pos.x, 0.1f);
-				ImGui::DragFloat3("Size##Ground", &g_size.x, 0.1f);
+				ImGui::DragFloat3("Size##Ground", &g_size.x, 0.1f, 0.0f, FLT_MAX);
 
 				ImGui::Spacing();
 			}

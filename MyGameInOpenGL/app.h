@@ -12,6 +12,7 @@
 #include "fault_formation_terrain.h"
 #include "midpoint_disp_terrain.h"
 #include "texture_generator.h"
+#include <cmath>
 
 using namespace std;
 
