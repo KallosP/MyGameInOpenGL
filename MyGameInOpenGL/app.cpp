@@ -11,12 +11,12 @@ float g = 167;
 float b = 245;
 // camera
 // -------------
-Camera camera{glm::vec3(200.0f, 400.0f, 100.0f)}; // brace initialization, always treated as variable (fixes vexing parse issue)
+Camera camera{glm::vec3(0.0f, 0.0f, 0.0f)}; // brace initialization, always treated as variable (fixes vexing parse issue)
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
-float camSpeed = 75.0f;
-float camBoost = 700.0f;
+float camSpeed = 10.0f;
+float camBoost = 40.0f;
 // timing
 // ------------
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -33,6 +33,9 @@ float Filter = 0.21f;
 float Roughness = 0.85f;
 float WorldScale = 5.0f;
 float TextureScale = 50.0f;
+// objects
+// --------
+// cube
 
 
 std::vector<const char*> terrainTextures = {"rock02_2.jpg", "rock01.jpg", "tilable-IMG_0044-verydark.png", "snow.png"};
@@ -61,17 +64,26 @@ void App::run() {
 	shaderProgram.setInt("material", 0); // telling GPU which texture slot to sample from (these are uniforms)
 	shaderProgram.setInt("mask", 1); 
 
-	auto textureMats = setupTerrainTextures(terrainTextures);
-	faultFormTerrain.InitTerrain(WorldScale, TextureScale);
-	//BaseTerrain terrain = setUpTerrain(Size, Iterations, MinHeight, MaxHeight, Filter, Roughness);
-	faultFormTerrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
-	//terrain.CreateMidpointDisplacement(Size, Roughness, MinHeight, MaxHeight);
+	//auto textureMats = setupTerrainTextures(terrainTextures);
+	//faultFormTerrain.InitTerrain(WorldScale, TextureScale);
+	////BaseTerrain terrain = setUpTerrain(Size, Iterations, MinHeight, MaxHeight, Filter, Roughness);
+	//faultFormTerrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
+	////terrain.CreateMidpointDisplacement(Size, Roughness, MinHeight, MaxHeight);
 
-	Material* terrainMat = new Material(createTerrainTexSrc(faultFormTerrain, terrainTextures));
+	//Material* terrainMat = new Material(createTerrainTexSrc(faultFormTerrain, terrainTextures));
+
+	// FIXME: cube is being rendered with terrain textures and game sometimes freezes/crashes
+	//		- potentially a massive memory leak somewhere with how the terrain is being rendered (possibly with Material class)
 
 	// Create a cube
-	Cube cube("source.gif", "container.jpg");
-	Ground ground("grass.jpg");
+	Cube cube("source.gif");
+	glm::vec3 c_pos = glm::vec3(0.0f, 2.0f, -0.5f);
+	glm::vec3 c_size = glm::vec3(1.0f, 1.0f, 1.0f);
+
+	Cube ground("grass.jpg");
+	glm::vec3 g_pos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 g_size = glm::vec3(100.0f, 1.0f, 100.0f);
+
 
 	// Render loop (every iteration is called a frame)
 	while (!glfwWindowShouldClose(window)) // checks if GLFW has been instructed to close
@@ -106,52 +118,92 @@ void App::run() {
 		//	firstRender = false;
 		//}
 
-		faultFormTerrain.Render(camera, *terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
+		//faultFormTerrain.Render(camera, *terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
-		//cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
-		//ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT);
+		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, c_pos, c_size);
+		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, g_pos, g_size);
 
 		// imgui
 		if (showImGui) {
 			ImGui::Begin("Settings");
-			ImGui::Text("Camera");
-			ImGui::SliderFloat("Speed", &camSpeed, 0.0f, 10000.0f);
-			ImGui::SliderFloat("Boost", &camBoost, 0.0f, 10000.0f);
-			ImGui::Separator();
 
-			ImGui::Text("Sky Color");
-			ImGui::SliderFloat("R", &r, 0.0f, 255.0f);
-			ImGui::SliderFloat("G", &g, 0.0f, 255.0f);
-			ImGui::SliderFloat("B", &b, 0.0f, 255.0f);
-			ImGui::Separator();
-
-			ImGui::Text("Terrain");
-			const char* items[] = { "Fault Formation", "Midpoint" };
-			static int selected = 0;
-			if (ImGui::Combo("Terrain Type", &selected, items, IM_ARRAYSIZE(items))) {
-				// selection changed → rebuild terrain
-				if (selected == 0) {
-					//isFaultFormation = true;
-				}
-				else {
-	
-				}
-			}
-			//ImGui::SliderFloat("WorldScale", &WorldScale, 0.0f, 500.0f);
-			ImGui::SliderInt("Size", &Size, 0, 2048);
-			ImGui::SliderInt("Iterations", &Iterations, 0, 10000);
-			ImGui::SliderFloat("MinHeight", &MinHeight, 0.0f, 500.0f);
-			ImGui::SliderFloat("MaxHeight", &MaxHeight, 0.0f, 500.0f);
-			ImGui::SliderFloat("Filter", &Filter, 0.0f, 0.99f);
-			if (ImGui::IsItemHovered())
+			//  Camera
+			if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				ImGui::SetTooltip("0 = rugged; 1 = smooth");
+				ImGui::Spacing();
+
+				ImGui::Text("Movement");
+				ImGui::DragFloat("Speed", &camSpeed, 0.05f, 0.0f, 100.0f, "%.2f");
+				ImGui::DragFloat("Boost", &camBoost, 1.0f, 0.0f, 10000.0f);
+
+				ImGui::Spacing();
 			}
-			if (ImGui::Button("Apply")) {
-				//BaseTerrain terrain = setUpTerrain(Size, Iterations, MinHeight, MaxHeight, Filter, Roughness);
-				faultFormTerrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
-				//terrain.CreateMidpointDisplacement(Size, Roughness, MinHeight, MaxHeight);
+
+			// Objects
+			if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				ImGui::Spacing();
+
+				ImGui::Text("Cube");
+				ImGui::DragFloat3("Position##Cube", &c_pos.x, 0.1f);
+				ImGui::DragFloat3("Size##Cube", &c_size.x, 0.1f);
+
+				ImGui::Spacing();
+				ImGui::Separator();
+				ImGui::Spacing();
+
+				ImGui::Text("Ground");
+				ImGui::DragFloat3("Position##Ground", &g_pos.x, 0.1f);
+				ImGui::DragFloat3("Size##Ground", &g_size.x, 0.1f);
+
+				ImGui::Spacing();
 			}
+
+			// Sky
+			if (ImGui::CollapsingHeader("Sky", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				ImGui::Spacing();
+
+				// Convert 0–255 → 0–1 for ImGui color widget
+				float color[3] = { r / 255.0f, g / 255.0f, b / 255.0f };
+
+				if (ImGui::ColorEdit3("Sky Color", color))
+				{
+					r = color[0] * 255.0f;
+					g = color[1] * 255.0f;
+					b = color[2] * 255.0f;
+				}
+
+				ImGui::Spacing();
+			}
+
+			//ImGui::Text("Terrain");
+			//const char* items[] = { "Fault Formation", "Midpoint" };
+			//static int selected = 0;
+			//if (ImGui::Combo("Terrain Type", &selected, items, IM_ARRAYSIZE(items))) {
+			//	// selection changed → rebuild terrain
+			//	if (selected == 0) {
+			//		//isFaultFormation = true;
+			//	}
+			//	else {
+	
+			//	}
+			//}
+			////ImGui::SliderFloat("WorldScale", &WorldScale, 0.0f, 500.0f);
+			//ImGui::SliderInt("Size", &Size, 0, 2048);
+			//ImGui::SliderInt("Iterations", &Iterations, 0, 10000);
+			//ImGui::SliderFloat("MinHeight", &MinHeight, 0.0f, 500.0f);
+			//ImGui::SliderFloat("MaxHeight", &MaxHeight, 0.0f, 500.0f);
+			//ImGui::SliderFloat("Filter", &Filter, 0.0f, 0.99f);
+			//if (ImGui::IsItemHovered())
+			//{
+			//	ImGui::SetTooltip("0 = rugged; 1 = smooth");
+			//}
+			//if (ImGui::Button("Apply")) {
+			//	//BaseTerrain terrain = setUpTerrain(Size, Iterations, MinHeight, MaxHeight, Filter, Roughness);
+			//	faultFormTerrain.CreateFaultFormation(Size, Iterations, MinHeight, MaxHeight, Filter);
+			//	//terrain.CreateMidpointDisplacement(Size, Roughness, MinHeight, MaxHeight);
+			//}
 			ImGui::End();
 		}
 		ImGui::Render();

@@ -10,7 +10,7 @@ Cube::Cube(const char* textureMaterialSrc, const char* textureMaskSrc) {
 	if (textureMaskSrc) mask = new Material(textureMaskSrc);
 }
 
-void Cube::draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SCR_HEIGHT) {
+void Cube::draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SCR_HEIGHT, glm::vec3 pos, glm::vec3 scale) {
 	material->use(0);
 	if (mask) {
 		mask->use(1); // texture unit 1
@@ -20,7 +20,8 @@ void Cube::draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SC
 	}
 	// model matrix
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0,1.0,0.0));
+	model = glm::translate(model, pos);
+	model = glm::scale(model, scale);
 	shaderProgram.setMat4("model", model);
 	// camera/view transformation
 	glm::mat4 view = camera.GetViewMatrix();
