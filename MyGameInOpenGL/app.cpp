@@ -128,10 +128,14 @@ void App::run() {
 
 		//faultFormTerrain.Render(camera, *terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
-		// TODO: - make the physics more "game like"
+		// TODO: 
+		// - implement camera/cube rotation in playerView 
+		// - make the physics more "game like"
 		// Position equation (applies gravity)
 
+		// bounce
 		float restitution = 0.5f;
+
 		// Basic collision detection
 		float c_half_height = c_size.y * 0.5f;
 		float cube_bottom = c_pos.y - c_half_height;
@@ -143,15 +147,22 @@ void App::run() {
 		if (cube_bottom <= ground_top) {
 			c_pos.y = c_half_height + ground_top;
 			if (c_velocity.y < 0.0f) {
-				c_velocity.y *= -restitution;
+				// bounce
+				c_velocity.y *= -restitution; 
+
+				if (c_velocity.y < 0.1f) {
+					c_velocity.y = 0.0f;
+				}
+
+				cout << c_velocity.y << endl;
 			}
-			
 		}
 		// Falling
 		else {
 			c_velocity += gravity * deltaTime;
-			c_pos = c_pos + c_velocity * deltaTime + (0.5f * gravity * pow(deltaTime, 2.0f));
 		}
+
+		c_pos = c_pos + c_velocity * deltaTime + (0.5f * gravity * pow(deltaTime, 2.0f));
 
 		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &c_pos, c_size, (float)glfwGetTime());
 		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &g_pos, g_size, 0.0f);
