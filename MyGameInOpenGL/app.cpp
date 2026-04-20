@@ -17,6 +17,7 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 float camSpeed = 10.0f;
 float camBoost = 40.0f;
+bool playerView = false;
 // timing
 // ------------
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -74,7 +75,7 @@ void App::run() {
 
 	// Create cube object
 	Cube cube("source.gif");
-	glm::vec3 c_pos = glm::vec3(0.0f, 2.0f, -0.5f);
+	glm::vec3 c_pos = glm::vec3(0.0f, 6.0f, -0.5f);
 	glm::vec3 c_velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 c_acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 c_size = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -100,8 +101,13 @@ void App::run() {
 		ImGuiIO& io = ImGui::GetIO();
 		if (!io.WantCaptureMouse && !io.WantCaptureKeyboard) {
 			// input
-			processInput(); // checks for user input (e.g. keyboard input)
+			processInput(&c_pos); // checks for user input (e.g. keyboard input)
 		}
+
+		if (playerView) {
+			camera.Position = glm::vec3(c_pos.x, c_pos.y + 3.0f, c_pos.z + 6.0f);
+		}
+
 
 		// rendering commands
 		glClearColor((float) r / 255.0f, (float) g / 255.0f, (float) b / 255.0f, 1.0f);
@@ -123,10 +129,9 @@ void App::run() {
 		//faultFormTerrain.Render(camera, *terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
 		// TODO: - make the physics more "game like"
-		//		- fix collision to 
 		// Position equation (applies gravity)
-		c_pos = c_pos + c_velocity * deltaTime + (0.5f * gravity * pow(deltaTime, 2.0f));
 
+		float restitution = 0.5f;
 		// Basic collision detection
 		float c_half_height = c_size.y * 0.5f;
 		float cube_bottom = c_pos.y - c_half_height;
@@ -134,12 +139,22 @@ void App::run() {
 		float g_half_height = g_size.y * 0.5f;
 		float ground_top = g_pos.y + g_half_height;
 
+		// Not falling
 		if (cube_bottom <= ground_top) {
 			c_pos.y = c_half_height + ground_top;
+			if (c_velocity.y < 0.0f) {
+				c_velocity.y *= -restitution;
+			}
+			
+		}
+		// Falling
+		else {
+			c_velocity += gravity * deltaTime;
+			c_pos = c_pos + c_velocity * deltaTime + (0.5f * gravity * pow(deltaTime, 2.0f));
 		}
 
-		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, c_pos, c_size);
-		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, g_pos, g_size);
+		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &c_pos, c_size, (float)glfwGetTime());
+		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &g_pos, g_size, 0.0f);
 
 		// imgui
 		if (showImGui) {
@@ -153,6 +168,7 @@ void App::run() {
 				ImGui::Text("Movement");
 				ImGui::DragFloat("Speed", &camSpeed, 0.05f, 0.0f, 100.0f, "%.2f");
 				ImGui::DragFloat("Boost", &camBoost, 1.0f, 0.0f, 10000.0f);
+				ImGui::Checkbox("Player View", &playerView);
 
 				ImGui::Spacing();
 			}
@@ -326,21 +342,34 @@ void App::initGLFW() {
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void App::processInput()
+void App::processInput(glm::vec3* c_pos)
 {
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		camera.MovementSpeed = camBoost;
-	else
-		camera.MovementSpeed = camSpeed;
+	if (playerView) {
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			c_pos->z -= 0.1f;
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			c_pos->z += 0.1f;
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			c_pos->x -= 0.1f;
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			c_pos->x += 0.1f;
+
+	}
+	else {
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			camera.ProcessKeyboard(FORWARD, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			camera.ProcessKeyboard(BACKWARD, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			camera.ProcessKeyboard(LEFT, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			camera.ProcessKeyboard(RIGHT, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+			camera.MovementSpeed = camBoost;
+		else
+			camera.MovementSpeed = camSpeed;
+	}
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

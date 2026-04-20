@@ -12,7 +12,7 @@ class Cube {
 		Material* material;
 		Material* mask;
 		Cube(const char* textureMaterialSrc, const char* textureMaskSrc = NULL);
-		void draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SCR_HEIGHT, glm::vec3 pos, glm::vec3 scale);
+		void draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SCR_HEIGHT, glm::vec3* pos, glm::vec3 scale, float rotation);
 	private: 
 };
 

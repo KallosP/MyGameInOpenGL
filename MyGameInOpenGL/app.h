@@ -25,7 +25,7 @@ class App {
 
 		std::vector<std::unique_ptr<Material>> setupTerrainTextures(std::vector<const char*> textures);
 		const char* createTerrainTexSrc(FaultFormationTerrain& terrain, std::vector<const char*> terrainTextures);
-		void processInput();
+		void processInput(glm::vec3* c_pos);
 		void initGLFW();
 		void initImGui();
 		//BaseTerrain setUpTerrain(int Size, int Iterations, float MinHeight, float MaxHeight, float Filter, float Roughness);
