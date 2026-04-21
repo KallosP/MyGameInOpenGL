@@ -17,7 +17,6 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 float camSpeed = 10.0f;
 float camBoost = 40.0f;
-bool playerView = false;
 // timing
 // ------------
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -79,6 +78,8 @@ void App::run() {
 	glm::vec3 c_velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 c_acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 c_size = glm::vec3(1.0f, 1.0f, 1.0f);
+	float cYaw = 0.0f;
+	glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f);
 
 	// Create ground object
 	Cube ground("grass.jpg");
@@ -101,11 +102,25 @@ void App::run() {
 		ImGuiIO& io = ImGui::GetIO();
 		if (!io.WantCaptureMouse && !io.WantCaptureKeyboard) {
 			// input
-			processInput(&c_pos); // checks for user input (e.g. keyboard input)
+			processInput(&c_pos, &forward, &cYaw, deltaTime); // checks for user input (e.g. keyboard input)
 		}
 
 		if (playerView) {
-			camera.Position = glm::vec3(c_pos.x, c_pos.y + 3.0f, c_pos.z + 6.0f);
+			// Calculate forward vector of cube/player
+			forward.x = cos(glm::radians(cYaw));
+			forward.y = 0.0f;
+			forward.z = -sin(glm::radians(cYaw)); // -Z is forward in Right handed coord system
+			forward = glm::normalize(forward);
+
+
+			// Follow player logic for camera
+			float distance = 5.0f;
+			float height = 2.0f;
+			camera.Position = c_pos - (forward * distance) + glm::vec3(0.0f, height, 0.0f);
+			camera.Front = glm::normalize(c_pos - camera.Position);
+			// must reset up vector to be world up vector, otherwise residual
+			// pitch from free cam will tilt camera in player view
+			camera.Up = glm::vec3(0.0f, 1.0f, 0.0f);
 		}
 
 
@@ -129,7 +144,7 @@ void App::run() {
 		//faultFormTerrain.Render(camera, *terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
 		// TODO: 
-		// - implement camera/cube rotation in playerView 
+		// - implement camera/cube rotation in playerView (need to get a better understanding of code for this)
 		// - make the physics more "game like"
 		// Position equation (applies gravity)
 
@@ -149,12 +164,10 @@ void App::run() {
 			if (c_velocity.y < 0.0f) {
 				// bounce
 				c_velocity.y *= -restitution; 
-
+				// Remove any potential jitter/infinite bounce near ground
 				if (c_velocity.y < 0.1f) {
 					c_velocity.y = 0.0f;
 				}
-
-				cout << c_velocity.y << endl;
 			}
 		}
 		// Falling
@@ -164,8 +177,8 @@ void App::run() {
 
 		c_pos = c_pos + c_velocity * deltaTime + (0.5f * gravity * pow(deltaTime, 2.0f));
 
-		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &c_pos, c_size, (float)glfwGetTime());
-		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &g_pos, g_size, 0.0f);
+		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &c_pos, c_size, cYaw, playerView);
+		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &g_pos, g_size, 0.0f, false);
 
 		// imgui
 		if (showImGui) {
@@ -353,18 +366,26 @@ void App::initGLFW() {
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void App::processInput(glm::vec3* c_pos)
+void App::processInput(glm::vec3* c_pos, glm::vec3* forward, float* cYaw, float dt)
 {
 
 	if (playerView) {
+		float speed = 10.0f;
+		float velocity = speed * dt;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			c_pos->z -= 0.1f;
+			//c_pos->z -= 0.1f;
+			*c_pos += *forward * velocity;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			c_pos->z += 0.1f;
+			//c_pos->z += 0.1f;
+			*c_pos -= *forward * velocity;
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			c_pos->x -= 0.1f;
+			//c_pos->x -= 0.1f;
+			*cYaw += 0.1f;
+			//camera.ProcessKeyboardForPlayer(-2.0f);
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			c_pos->x += 0.1f;
+			//c_pos->x += 0.1f;
+			*cYaw -= 0.1f;
+			//camera.ProcessKeyboardForPlayer(2.0f);
 
 	}
 	else {
@@ -399,24 +420,28 @@ void App::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
 	App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
 
-	float xpos = static_cast<float>(xposIn);
-	float ypos = static_cast<float>(yposIn);
+	if (!app->playerView) {
+		float xpos = static_cast<float>(xposIn);
+		float ypos = static_cast<float>(yposIn);
 
-	if (firstMouse)
-	{
+		if (firstMouse)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
 		lastX = xpos;
 		lastY = ypos;
-		firstMouse = false;
-	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+		// Disable camera movement from cursor when cursor is disabled (i.e. has settings open)
+		if (app->cursorState == GLFW_CURSOR_DISABLED) {
+			camera.ProcessMouseMovement(xoffset, yoffset, true);
+		}
 
-	lastX = xpos;
-	lastY = ypos;
-
-	if (app->cursorState == GLFW_CURSOR_DISABLED) {
-		camera.ProcessMouseMovement(xoffset, yoffset);
 	}
 }
 

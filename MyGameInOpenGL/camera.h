@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 #include "config.h"
+#include <iostream>
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -61,6 +62,11 @@ public:
         return glm::lookAt(Position, Position + Front, Up);
     }
 
+    glm::mat4 GetViewMatrixPlayer(glm::vec3* playerPos, glm::vec3* forward)
+    {
+        return glm::lookAt(Position, *playerPos + *forward, Up);
+    }
+
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
@@ -75,24 +81,30 @@ public:
             Position += Right * velocity;
     }
 
+    void ProcessKeyboardForPlayer(float rotation) {
+        Yaw += rotation;
+        std::cout << Yaw << std::endl;
+        updateCameraVectors();
+    }
+
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
     {
         xoffset *= MouseSensitivity;
-        yoffset *= MouseSensitivity;
-
         Yaw   += xoffset;
-        Pitch += yoffset;
 
-        // make sure that when pitch is out of bounds, screen doesn't get flipped
-        if (constrainPitch)
-        {
-            if (Pitch > 89.0f)
-                Pitch = 89.0f;
-            if (Pitch < -89.0f)
-                Pitch = -89.0f;
+		// Needed for free camera to look up/down
+		yoffset *= MouseSensitivity;
+		Pitch += yoffset;
+
+		// make sure that when pitch is out of bounds, screen doesn't get flipped
+		if (constrainPitch)
+		{
+			if (Pitch > 89.0f)
+				Pitch = 89.0f;
+			if (Pitch < -89.0f)
+				Pitch = -89.0f;
         }
-
         // update Front, Right and Up Vectors using the updated Euler angles
         updateCameraVectors();
     }

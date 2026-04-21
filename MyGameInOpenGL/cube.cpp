@@ -12,7 +12,7 @@ Cube::Cube(const char* textureMaterialSrc, const char* textureMaskSrc) {
 
 void Cube::draw(Shader& shaderProgram, Camera& camera, 
 	float SCR_WIDTH, float SCR_HEIGHT, glm::vec3* pos, 
-	glm::vec3 scale, float rotation) 
+	glm::vec3 scale, float yaw, bool playerView) 
 {
 	material->use(0);
 	if (mask) {
@@ -24,11 +24,20 @@ void Cube::draw(Shader& shaderProgram, Camera& camera,
 	// model matrix
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, *pos);
-	model = glm::rotate(model, rotation, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, glm::radians(yaw), glm::vec3(0, 1, 0));
 	model = glm::scale(model, scale);
 	shaderProgram.setMat4("model", model);
 	// camera/view transformation
-	glm::mat4 view = camera.GetViewMatrix();
+	glm::mat4 view;
+	//if (playerView) {
+	//	view = camera.GetViewMatrixPlayer(*pos);
+	//}
+	//else {
+	// transforms the cube from world space to camera space, so it appears correctly
+	// relative to the camera's position/orientation (which is stationary, the objects/world
+	// move around the camera)
+	view = camera.GetViewMatrix();
+	//}
 	shaderProgram.setMat4("view", view);
 	// pass projection matrix to shader (note that in this case it could change every frame)
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), SCR_WIDTH / SCR_HEIGHT, 0.1f, 1000.0f);
