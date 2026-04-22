@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "camera.h" // required for forward declaration
 
 // constructor
 Cube::Cube(const char* textureMaterialSrc, const char* textureMaskSrc) {
@@ -12,7 +13,7 @@ Cube::Cube(const char* textureMaterialSrc, const char* textureMaskSrc) {
 
 void Cube::draw(Shader& shaderProgram, Camera& camera, 
 	float SCR_WIDTH, float SCR_HEIGHT, glm::vec3* pos, 
-	glm::vec3 scale, float yaw, bool playerView) 
+	glm::vec3 scale, float yaw) 
 {
 	material->use(0);
 	if (mask) {
@@ -29,10 +30,6 @@ void Cube::draw(Shader& shaderProgram, Camera& camera,
 	shaderProgram.setMat4("model", model);
 	// camera/view transformation
 	glm::mat4 view;
-	//if (playerView) {
-	//	view = camera.GetViewMatrixPlayer(*pos);
-	//}
-	//else {
 	// transforms the cube from world space to camera space, so it appears correctly
 	// relative to the camera's position/orientation (which is stationary, the objects/world
 	// move around the camera)

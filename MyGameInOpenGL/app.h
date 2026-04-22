@@ -13,6 +13,7 @@
 #include "midpoint_disp_terrain.h"
 #include "texture_generator.h"
 #include <cmath>
+#include "player.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ class App {
 
 		std::vector<std::unique_ptr<Material>> setupTerrainTextures(std::vector<const char*> textures);
 		const char* createTerrainTexSrc(FaultFormationTerrain& terrain, std::vector<const char*> terrainTextures);
-		void processInput(glm::vec3* c_pos, glm::vec3* forward, float* cYaw, float dt);
+		void processInput(Player* player, float dt);
 		void initGLFW();
 		void initImGui();
 		//BaseTerrain setUpTerrain(int Size, int Iterations, float MinHeight, float MaxHeight, float Filter, float Roughness);

@@ -135,8 +135,10 @@
   <ItemGroup>
     <ClCompile Include="app.cpp" />
     <ClCompile Include="array_2D.h" />
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="cube_mesh.cpp" />
+    <ClCompile Include="entity.cpp" />
     <ClCompile Include="fault_formation_terrain.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="ground.cpp" />
@@ -151,6 +153,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="midpoint_disp_terrain.cpp" />
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="terrain.cpp" />
     <ClCompile Include="texture_generator.cpp" />
@@ -165,6 +168,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="cube_mesh.h" />
+    <ClInclude Include="entity.h" />
     <ClInclude Include="fault_formation_terrain.h" />
     <ClInclude Include="ground.h" />
     <ClInclude Include="ground_mesh.h" />
@@ -183,6 +187,7 @@
     </ClCompile>
     <ClInclude Include="math.h" />
     <ClInclude Include="midpoint_disp_terrain.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="read_files.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>

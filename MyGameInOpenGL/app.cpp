@@ -74,12 +74,8 @@ void App::run() {
 
 	// Create cube object
 	Cube cube("source.gif");
-	glm::vec3 c_pos = glm::vec3(0.0f, 6.0f, -0.5f);
-	glm::vec3 c_velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 c_acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 c_size = glm::vec3(1.0f, 1.0f, 1.0f);
-	float cYaw = 0.0f;
-	glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f);
+	// Create a player object as cube
+	Player player(cube);
 
 	// Create ground object
 	Cube ground("grass.jpg");
@@ -102,25 +98,12 @@ void App::run() {
 		ImGuiIO& io = ImGui::GetIO();
 		if (!io.WantCaptureMouse && !io.WantCaptureKeyboard) {
 			// input
-			processInput(&c_pos, &forward, &cYaw, deltaTime); // checks for user input (e.g. keyboard input)
+			processInput(&player, deltaTime); // checks for user input (e.g. keyboard input)
 		}
 
 		if (playerView) {
-			// Calculate forward vector of cube/player
-			forward.x = cos(glm::radians(cYaw));
-			forward.y = 0.0f;
-			forward.z = -sin(glm::radians(cYaw)); // -Z is forward in Right handed coord system
-			forward = glm::normalize(forward);
-
-
-			// Follow player logic for camera
-			float distance = 5.0f;
-			float height = 2.0f;
-			camera.Position = c_pos - (forward * distance) + glm::vec3(0.0f, height, 0.0f);
-			camera.Front = glm::normalize(c_pos - camera.Position);
-			// must reset up vector to be world up vector, otherwise residual
-			// pitch from free cam will tilt camera in player view
-			camera.Up = glm::vec3(0.0f, 1.0f, 0.0f);
+			player.update();
+			camera.follow(&player);
 		}
 
 
@@ -152,33 +135,33 @@ void App::run() {
 		float restitution = 0.5f;
 
 		// Basic collision detection
-		float c_half_height = c_size.y * 0.5f;
-		float cube_bottom = c_pos.y - c_half_height;
+		float c_half_height = player.Size.y * 0.5f;
+		float cube_bottom = player.Position.y - c_half_height;
 
 		float g_half_height = g_size.y * 0.5f;
 		float ground_top = g_pos.y + g_half_height;
 
 		// Not falling
 		if (cube_bottom <= ground_top) {
-			c_pos.y = c_half_height + ground_top;
-			if (c_velocity.y < 0.0f) {
+			player.Position.y = c_half_height + ground_top;
+			if (player.Velocity.y < 0.0f) {
 				// bounce
-				c_velocity.y *= -restitution; 
+				player.Velocity.y *= -restitution; 
 				// Remove any potential jitter/infinite bounce near ground
-				if (c_velocity.y < 0.1f) {
-					c_velocity.y = 0.0f;
+				if (player.Velocity.y < 0.1f) {
+					player.Velocity.y = 0.0f;
 				}
 			}
 		}
 		// Falling
 		else {
-			c_velocity += gravity * deltaTime;
+			player.Velocity += gravity * deltaTime;
 		}
+		player.Position = player.Position + player.Velocity * deltaTime + (0.5f * gravity * pow(deltaTime, 2.0f));
 
-		c_pos = c_pos + c_velocity * deltaTime + (0.5f * gravity * pow(deltaTime, 2.0f));
+		player.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
-		cube.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &c_pos, c_size, cYaw, playerView);
-		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &g_pos, g_size, 0.0f, false);
+		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &g_pos, g_size, 0.0f);
 
 		// imgui
 		if (showImGui) {
@@ -193,7 +176,11 @@ void App::run() {
 				ImGui::DragFloat("Speed", &camSpeed, 0.05f, 0.0f, 100.0f, "%.2f");
 				ImGui::DragFloat("Boost", &camBoost, 1.0f, 0.0f, 10000.0f);
 				ImGui::Checkbox("Player View", &playerView);
-
+				ImGui::DragFloat("Height", &camera.CamHeight, 1.0f, 0.0f, 100.0f, "%.2f");
+				ImGui::DragFloat("Distance", &camera.CamDistance, 1.0f, 0.0f, 100.0f, "%.2f");
+				ImGui::DragFloat("Player Speed", &camera.speed, 1.0f, 0.0f, 100.0f, "%.2f");
+				ImGui::DragFloat("Turn Speed", &camera.turnSpeed, 1.0f, 0.0f, 100.0f, "%.2f");
+				
 				ImGui::Spacing();
 			}
 
@@ -214,8 +201,8 @@ void App::run() {
 				ImGui::Spacing();
 
 				ImGui::Text("Cube");
-				ImGui::DragFloat3("Position##Cube", &c_pos.x, 0.1f);
-				ImGui::DragFloat3("Size##Cube", &c_size.x, 0.1f);
+				ImGui::DragFloat3("Position##Cube", &player.Position.x, 0.1f);
+				ImGui::DragFloat3("Size##Cube", &player.Size.x, 0.1f);
 
 				ImGui::Spacing();
 				ImGui::Separator();
@@ -366,27 +353,28 @@ void App::initGLFW() {
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void App::processInput(glm::vec3* c_pos, glm::vec3* forward, float* cYaw, float dt)
+void App::processInput(Player* player, float dt)
 {
 
 	if (playerView) {
-		float speed = 10.0f;
-		float velocity = speed * dt;
+		float velocity = camera.speed * dt;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 			//c_pos->z -= 0.1f;
-			*c_pos += *forward * velocity;
+			player->Position += player->Forward * velocity;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 			//c_pos->z += 0.1f;
-			*c_pos -= *forward * velocity;
+			player->Position -= player->Forward * velocity;
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 			//c_pos->x -= 0.1f;
-			*cYaw += 0.1f;
+			player->Yaw += camera.turnSpeed;
 			//camera.ProcessKeyboardForPlayer(-2.0f);
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 			//c_pos->x += 0.1f;
-			*cYaw -= 0.1f;
+			player->Yaw -= camera.turnSpeed;
 			//camera.ProcessKeyboardForPlayer(2.0f);
-
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){}
+			//TODO: 
+			//player->Position += 20.5f;
 	}
 	else {
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
