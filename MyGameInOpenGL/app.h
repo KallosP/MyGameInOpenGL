@@ -14,6 +14,7 @@
 #include "texture_generator.h"
 #include <cmath>
 #include "player.h"
+#include "physics.h"
 
 using namespace std;
 
@@ -26,7 +27,7 @@ class App {
 
 		std::vector<std::unique_ptr<Material>> setupTerrainTextures(std::vector<const char*> textures);
 		const char* createTerrainTexSrc(FaultFormationTerrain& terrain, std::vector<const char*> terrainTextures);
-		void processInput(Player* player, float dt);
+		void processInput(Player* player);
 		void initGLFW();
 		void initImGui();
 		//BaseTerrain setUpTerrain(int Size, int Iterations, float MinHeight, float MaxHeight, float Filter, float Roughness);

@@ -4,11 +4,12 @@
 #include "material.h"
 #include "cube_mesh.h"
 #include "shader.h"
+#include "entity.h"
 
 // forward declaration (removes need for including camera.h which avoids circular dependency)
 class Camera;
 
-class Cube {
+class Cube : public Entity {
 	public:
 		CubeMesh* cubeMesh;
 		Material* material;

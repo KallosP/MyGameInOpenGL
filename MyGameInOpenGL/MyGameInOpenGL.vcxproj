@@ -153,6 +153,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="midpoint_disp_terrain.cpp" />
+    <ClCompile Include="physics.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="terrain.cpp" />
@@ -187,10 +188,12 @@
     </ClCompile>
     <ClInclude Include="math.h" />
     <ClInclude Include="midpoint_disp_terrain.h" />
+    <ClInclude Include="physics.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="read_files.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="rigidbody.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />

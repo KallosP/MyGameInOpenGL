@@ -44,8 +44,9 @@ public:
     // Player Cam Settings
 	float CamDistance = 10.0f; // distance from player
 	float CamHeight = 3.0f; // height above player
-	float speed = 21.0f;
-    float turnSpeed = 1.0f;
+	float Speed = 21.0f;
+    float TurnSpeed = 1.0f;
+    float Velocity;
     // constructor with vectors
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) 
     {
@@ -76,6 +77,8 @@ public:
     void ProcessMouseScroll(float yoffset);
 
     float getDefaultSpeed();
+
+    float getVelocity(float dt);
 
     void follow(Player* player);
 

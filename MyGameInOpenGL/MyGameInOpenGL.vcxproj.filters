@@ -40,8 +40,26 @@
     <Filter Include="Source Files\libraries\stb">
       <UniqueIdentifier>{2504cb28-3947-440f-a49b-ec7b95f29bf7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\imgui">
+    <Filter Include="Header Files\model">
+      <UniqueIdentifier>{1fb74066-9cf2-48d4-9d64-f29f9600271f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\view">
+      <UniqueIdentifier>{c1d27d21-20b1-4ced-8f6d-1cd4ce8b66dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\controller">
+      <UniqueIdentifier>{ac2d4168-c52f-4274-b8af-87fc41477fc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{6c5811c3-141c-4f2b-b3aa-3899273e3d35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\libraries">
+      <UniqueIdentifier>{a78d9964-8150-4c6a-87bc-1020ac477f0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\libraries\imgui">
       <UniqueIdentifier>{db7f64a6-71a5-41e4-b07e-ee8b5cf3bbec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\libraries\stb">
+      <UniqueIdentifier>{29ffd65d-309c-4b17-8e7f-953b135391e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,9 +80,6 @@
     </ClCompile>
     <ClCompile Include="ground_mesh.cpp">
       <Filter>Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="array_2D.h">
-      <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="terrain.cpp">
       <Filter>Source Files\model</Filter>
@@ -123,97 +138,109 @@
     <ClCompile Include="camera.cpp">
       <Filter>Source Files\model</Filter>
     </ClCompile>
+    <ClCompile Include="array_2D.h">
+      <Filter>Header Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="physics.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Notes.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h">
-      <Filter>Source Files\model</Filter>
-    </ClInclude>
-    <ClInclude Include="material.h">
-      <Filter>Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="shader.h">
-      <Filter>Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="app.h">
-      <Filter>Source Files\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="cube.h">
-      <Filter>Source Files\model</Filter>
-    </ClInclude>
-    <ClInclude Include="cube_mesh.h">
-      <Filter>Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="ground.h">
-      <Filter>Source Files\model</Filter>
-    </ClInclude>
-    <ClInclude Include="ground_mesh.h">
-      <Filter>Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="terrain.h">
-      <Filter>Source Files\model</Filter>
-    </ClInclude>
-    <ClInclude Include="read_files.h">
-      <Filter>Source Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="triangle_list.h">
-      <Filter>Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="fault_formation_terrain.h">
-      <Filter>Source Files\model</Filter>
-    </ClInclude>
-    <ClInclude Include="midpoint_disp_terrain.h">
-      <Filter>Source Files\model</Filter>
-    </ClInclude>
-    <ClInclude Include="math.h">
-      <Filter>Source Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="texture_generator.h">
-      <Filter>Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Source Files\libraries\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image_write.h">
-      <Filter>Source Files\libraries\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="config.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imgui_impl_opengl3.h">
-      <Filter>Header Files\imgui</Filter>
+      <Filter>Header Files\libraries\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_internal.h">
-      <Filter>Header Files\imgui</Filter>
+      <Filter>Header Files\libraries\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_rectpack.h">
-      <Filter>Header Files\imgui</Filter>
+      <Filter>Header Files\libraries\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_textedit.h">
-      <Filter>Header Files\imgui</Filter>
+      <Filter>Header Files\libraries\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_truetype.h">
-      <Filter>Header Files\imgui</Filter>
+      <Filter>Header Files\libraries\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
-      <Filter>Header Files\imgui</Filter>
+      <Filter>Header Files\libraries\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui.h">
-      <Filter>Header Files\imgui</Filter>
+      <Filter>Header Files\libraries\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_glfw.h">
-      <Filter>Header Files\imgui</Filter>
+      <Filter>Header Files\libraries\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
-      <Filter>Header Files\imgui</Filter>
+      <Filter>Header Files\libraries\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>Source Files\model</Filter>
+    <ClInclude Include="cube.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="app.h">
+      <Filter>Header Files\controller</Filter>
     </ClInclude>
     <ClInclude Include="entity.h">
-      <Filter>Source Files\model</Filter>
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="fault_formation_terrain.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="ground.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="midpoint_disp_terrain.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="terrain.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="read_files.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="cube_mesh.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="ground_mesh.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="material.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="triangle_list.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="texture_generator.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files\libraries\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_write.h">
+      <Filter>Header Files\libraries\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="rigidbody.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="physics.h">
+      <Filter>Header Files\model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
