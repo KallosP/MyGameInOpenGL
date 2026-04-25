@@ -103,7 +103,7 @@ void App::run() {
 			// Update player position (forward vector)
 			player.update();
 			// Update camera position to follow player
-			camera.follow(&player);
+			camera.follow(&player, deltaTime);
 		}
 
 
@@ -153,6 +153,7 @@ void App::run() {
 				ImGui::DragFloat("Distance", &camera.CamDistance, 1.0f, 0.0f, 100.0f, "%.2f");
 				ImGui::DragFloat("Player Speed", &camera.Speed, 1.0f, 0.0f, 100.0f, "%.2f");
 				ImGui::DragFloat("Turn Speed", &camera.TurnSpeed, 1.0f, 0.0f, 100.0f, "%.2f");
+				ImGui::DragFloat("Smoothing", &camera.SmoothSpeed, 1.0f, 0.0f, 100.0f, "%.2f");
 				
 				ImGui::Spacing();
 			}

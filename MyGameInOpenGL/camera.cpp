@@ -63,9 +63,22 @@ glm::mat4 Camera::GetViewMatrix()
 	return glm::lookAt(Position, Position + Front, Up);
 }
 
-void Camera::follow(Player* player) {
+void Camera::follow(Player* player, float dt) {
 	// Follow player logic for camera
-	Position = player->Position - (player->Forward * CamDistance) + glm::vec3(0.0f, CamHeight, 0.0f);
+	// ---------------------------------
+	// need to calculate cam's position from player's forward vector b/c cam
+	// always needs to face same direction as player's front (i.e. forward vector),
+	// multiplying by a float (CamDistance) sets how far back the camera is from the
+	// player
+	glm::vec3 camTargetPos = (player->Position - (player->Forward * CamDistance) + glm::vec3(0.0f, CamHeight, 0.0f));
+
+	// exponential linear interpolation (easing) to smooth out camera movement, t is the interpolation factor
+	// -> exp(-smoothSpeed * dt) produces a value that starts near 1 and decays toward 0 over time
+	// -> 1.0f - ... flip it to move toward the target
+	float t = 1.0f - exp(-SmoothSpeed * dt);
+	// glm::mix = linear interpolation, is saying "move the camera's position toward the target position by a factor of t"
+	// note that t goes from near 0 and approaches 1
+	Position = glm::mix(Position, camTargetPos, t);
 	Front = glm::normalize(player->Position - Position);
 	// must reset up vector to be world up vector, otherwise residual
 	// pitch from free cam will tilt camera in player view
@@ -82,7 +95,7 @@ void Camera::updateCameraVectors()
 	front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 	Front = glm::normalize(front);
 	// also re-calculate the Right and Up vector
-	Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+	Right = glm::normalize(glm::cross(Front, WorldUp)); // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 	Up    = glm::normalize(glm::cross(Right, Front));
 }
 

@@ -47,6 +47,7 @@ public:
 	float Speed = 21.0f;
     float TurnSpeed = 1.0f;
     float Velocity;
+	float SmoothSpeed = 8.0f; // how fast camera reacts to smoothing
     // constructor with vectors
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) 
     {
@@ -80,7 +81,7 @@ public:
 
     float getVelocity(float dt);
 
-    void follow(Player* player);
+    void follow(Player* player, float dt);
 
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles
