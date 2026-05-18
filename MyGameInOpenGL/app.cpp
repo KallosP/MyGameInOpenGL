@@ -1,4 +1,5 @@
 #include "app.h"
+#include <assimp/Importer.hpp>
 
 // settings
 // --------------
@@ -54,6 +55,7 @@ App::App() {
 // - CLEAN UP AND UNDERSTAND YOUR CODE BEFORE MOVING ON	(rewatch tutorial series if needed)
 
 void App::run() {
+	Assimp::Importer importer;
 	Shader shaderProgram("shader.vs", "shader.fs");
 	shaderProgram.use();
 	// Assign the uniform variables declared on the GPU (in the GLSL fragment shader code) with
@@ -127,8 +129,7 @@ void App::run() {
 		//faultFormTerrain.Render(camera, *terrainMat, textureMats, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 
 		// TODO: 
-		// - implement camera/cube rotation in playerView (need to get a better understanding of code for this)
-		// - make the physics more "game like"
+		// - Replace cube with ATV model (go through Model Loading guide learnopengl)
 
 		// Update the physics of the player every tick
 		physics.update(player, ground, deltaTime);
