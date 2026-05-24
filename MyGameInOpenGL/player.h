@@ -1,18 +1,18 @@
 #pragma once
 #include "config.h"
 #include "entity.h"
-#include "cube.h"
 #include "rigidbody.h"
+#include "model.h"
 
 class Camera;
 class Shader;
 
 class Player : public Entity {
 	public:
-		// TODO: replace cube with real player/ATV model later, cube is temporary
-		Player(Cube& cubeModel);
+		Player(Model& model);
 		void update();
-		void draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SCR_HEIGHT);
+		void draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SCR_HEIGHT,
+			glm::vec3* pos, glm::vec3 scale, float yaw);
 
 		Rigidbody rb;
 
@@ -21,5 +21,5 @@ class Player : public Entity {
 		float Yaw = 0.0f;
 		glm::vec3 Forward = glm::vec3(0.0f, 0.0f, -1.0f);
 	private:
-		Cube* cubeModel;
+		Model* model;
 };

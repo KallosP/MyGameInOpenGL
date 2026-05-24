@@ -80,16 +80,27 @@ void App::run() {
 
 	Shader modelShader("model_loading.vs", "model_loading.fs");
 
-	Model ourModel("models/atv/model.obj");
+	Model atvModel("models/atv/model.obj");
 
-	// Create cube object
-	Cube cube("source.gif");
-	// Create a player object as cube
-	Player player(cube);
+	// Create a player object w/ atv model
+	Player player(atvModel);
 
 	// Create ground object
+
+	// TODO: Change how game objects are rendered
+	// - Rather than Cube, Ground create something like Objects or Entity 
+	//   and have it use the Model class to render any model (e.g. cube, atv, bushes, etc)
 	Cube ground("grass.jpg");
 	ground.Size = glm::vec3(100.0f, 0.0f, 100.0f);
+
+	Cube cube("rock02_2.jpg");
+	cube.Position = glm::vec3(0.0f, 0.5f, 5.0f);
+	Cube cube2("rock02_2.jpg");
+	cube2.Position = glm::vec3(0.0f, 0.5f, -5.0f);
+	Cube cube3("source.gif");
+	cube3.Position = glm::vec3(15.0f, 0.5f, 5.0f);
+	Cube cube4("source.gif");
+	cube4.Position = glm::vec3(15.0f, 0.5f, -5.0f);
 
 	Physics physics;
 
@@ -143,22 +154,14 @@ void App::run() {
 		physics.update(player, ground, deltaTime);
 
 		shaderProgram.use();
-		player.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &ground.Position, ground.Size, 0.0f);
-
+		cube.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &cube.Position, cube.Size, 0.0f);
+		cube2.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &cube2.Position, cube2.Size, 0.0f);
+		cube3.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &cube3.Position, cube3.Size, 0.0f);
+		cube4.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &cube4.Position, cube4.Size, 0.0f);
 
 		modelShader.use();
-		// view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-        modelShader.setMat4("projection", projection);
-        modelShader.setMat4("view", view);
-
-		glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 2.0f, 0.0f)); // translate it down so it's at the center of the scene
-        //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        modelShader.setMat4("model", model);
-        ourModel.Draw(modelShader);
+		player.draw(modelShader, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &player.Position, player.Size, player.Yaw);
 
 
 		// imgui

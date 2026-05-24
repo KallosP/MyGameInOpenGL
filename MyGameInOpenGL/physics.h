@@ -7,7 +7,7 @@ public:
     void update(Player& player, Entity& ground, float dt);
 	glm::vec3 gravity = glm::vec3(0.0f, -9.8f, 0.0f);
 	// bounce
-	float restitution = 0.5f;
+	float restitution = 0.2f;
 
 private:
     void applyGravity(Player& player, float dt);
