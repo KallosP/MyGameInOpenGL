@@ -1,5 +1,4 @@
 #include "app.h"
-#include <assimp/Importer.hpp>
 
 // settings
 // --------------
@@ -55,9 +54,7 @@ App::App() {
 // - CLEAN UP AND UNDERSTAND YOUR CODE BEFORE MOVING ON	(rewatch tutorial series if needed)
 
 void App::run() {
-	Assimp::Importer importer;
 	Shader shaderProgram("shader.vs", "shader.fs");
-	shaderProgram.use();
 	// Assign the uniform variables declared on the GPU (in the GLSL fragment shader code) with
 	// the corresponding data we've declared here on the CPU (material & mask)
 	shaderProgram.setInt("material", 0); // telling GPU which texture slot to sample from (these are uniforms)
@@ -73,6 +70,17 @@ void App::run() {
 
 	// FIXME: cube is being rendered with terrain textures and game sometimes freezes/crashes
 	//		- potentially a massive memory leak somewhere with how the terrain is being rendered (possibly with Material class)
+
+	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+	// NOTE: normally need to set this to true, but for the atv model,
+	//		 when it was converted from .glb to .obj, the conversion site
+	//		 automatically flipped the texture file on the y-axis, so not needed for atv model
+	//stbi_set_flip_vertically_on_load(true); 
+
+
+	Shader modelShader("model_loading.vs", "model_loading.fs");
+
+	Model ourModel("models/atv/model.obj");
 
 	// Create cube object
 	Cube cube("source.gif");
@@ -134,8 +142,24 @@ void App::run() {
 		// Update the physics of the player every tick
 		physics.update(player, ground, deltaTime);
 
+		shaderProgram.use();
 		player.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT);
 		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &ground.Position, ground.Size, 0.0f);
+
+
+		modelShader.use();
+		// view/projection transformations
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 view = camera.GetViewMatrix();
+        modelShader.setMat4("projection", projection);
+        modelShader.setMat4("view", view);
+
+		glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 2.0f, 0.0f)); // translate it down so it's at the center of the scene
+        //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        modelShader.setMat4("model", model);
+        ourModel.Draw(modelShader);
+
 
 		// imgui
 		if (showImGui) {

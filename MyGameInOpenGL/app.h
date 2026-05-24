@@ -15,6 +15,7 @@
 #include <cmath>
 #include "player.h"
 #include "physics.h"
+#include "model.h"
 
 using namespace std;
 

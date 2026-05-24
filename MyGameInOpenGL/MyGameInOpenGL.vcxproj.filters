@@ -16,9 +16,6 @@
     <Filter Include="Source Files\model">
       <UniqueIdentifier>{8a27c9e4-370f-4de2-b71e-8b09d6ae9350}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\view">
-      <UniqueIdentifier>{7874ecdf-dd63-41f3-8d54-d2eaf49a4c52}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\controller">
       <UniqueIdentifier>{c7575c9a-fe0f-4343-9afa-383f2f9eed43}</UniqueIdentifier>
     </Filter>
@@ -61,10 +58,19 @@
     <Filter Include="Header Files\libraries\stb">
       <UniqueIdentifier>{29ffd65d-309c-4b17-8e7f-953b135391e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utils\view">
+      <UniqueIdentifier>{7874ecdf-dd63-41f3-8d54-d2eaf49a4c52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\models">
+      <UniqueIdentifier>{ea84e15f-5601-4186-a722-2055de36d84d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\models\ATV">
+      <UniqueIdentifier>{9bbdd5fb-0fb8-48f6-ac49-d876842fba8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="material.cpp">
-      <Filter>Source Files\view</Filter>
+      <Filter>Source Files\utils\view</Filter>
     </ClCompile>
     <ClCompile Include="app.cpp">
       <Filter>Source Files\controller</Filter>
@@ -73,13 +79,13 @@
       <Filter>Source Files\model</Filter>
     </ClCompile>
     <ClCompile Include="cube_mesh.cpp">
-      <Filter>Source Files\view</Filter>
+      <Filter>Source Files\utils\view</Filter>
     </ClCompile>
     <ClCompile Include="ground.cpp">
       <Filter>Source Files\model</Filter>
     </ClCompile>
     <ClCompile Include="ground_mesh.cpp">
-      <Filter>Source Files\view</Filter>
+      <Filter>Source Files\utils\view</Filter>
     </ClCompile>
     <ClCompile Include="terrain.cpp">
       <Filter>Source Files\model</Filter>
@@ -88,7 +94,7 @@
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="triangle_list.cpp">
-      <Filter>Source Files\view</Filter>
+      <Filter>Source Files\utils\view</Filter>
     </ClCompile>
     <ClCompile Include="fault_formation_terrain.cpp">
       <Filter>Source Files\model</Filter>
@@ -97,7 +103,7 @@
       <Filter>Source Files\model</Filter>
     </ClCompile>
     <ClCompile Include="texture_generator.cpp">
-      <Filter>Source Files\view</Filter>
+      <Filter>Source Files\utils\view</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
@@ -129,9 +135,6 @@
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>Source Files\libraries\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>Source Files\model</Filter>
-    </ClCompile>
     <ClCompile Include="entity.cpp">
       <Filter>Source Files\model</Filter>
     </ClCompile>
@@ -142,6 +145,12 @@
       <Filter>Header Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="physics.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
       <Filter>Source Files\model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,6 +251,12 @@
     <ClInclude Include="physics.h">
       <Filter>Header Files\model</Filter>
     </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.fs">
@@ -258,6 +273,15 @@
     </None>
     <None Include="terrain.fs">
       <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="model_loading.vs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="model_loading.fs">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="model.mtl">
+      <Filter>Resource Files\models\ATV</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -281,6 +305,9 @@
     </Image>
     <Image Include="tilable-IMG_0044-verydark.png">
       <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="material16.png">
+      <Filter>Resource Files\models\ATV</Filter>
     </Image>
   </ItemGroup>
 </Project>
