@@ -9,7 +9,7 @@ class Shader;
 
 class Player : public Entity {
 	public:
-		Player(Model& model);
+		Player(const string& modelPath);
 		void update();
 		void draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SCR_HEIGHT,
 			glm::vec3* pos, glm::vec3 scale, float yaw);
@@ -20,6 +20,4 @@ class Player : public Entity {
 
 		float Yaw = 0.0f;
 		glm::vec3 Forward = glm::vec3(0.0f, 0.0f, -1.0f);
-	private:
-		Model* model;
 };

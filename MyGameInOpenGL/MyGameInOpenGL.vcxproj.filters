@@ -257,6 +257,9 @@
     <ClInclude Include="model.h">
       <Filter>Header Files\model</Filter>
     </ClInclude>
+    <ClInclude Include="transform.h">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.fs">

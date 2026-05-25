@@ -77,30 +77,22 @@ void App::run() {
 	//		 automatically flipped the texture file on the y-axis, so not needed for atv model
 	//stbi_set_flip_vertically_on_load(true); 
 
+	glEnable(GL_DEPTH_TEST);
+
 
 	Shader modelShader("model_loading.vs", "model_loading.fs");
 
-	Model atvModel("models/atv/model.obj");
 
-	// Create a player object w/ atv model
-	Player player(atvModel);
+	// Create a player object 
+	Player player("models/atv/model.obj");
 
 	// Create ground object
 
 	// TODO: Change how game objects are rendered
 	// - Rather than Cube, Ground create something like Objects or Entity 
 	//   and have it use the Model class to render any model (e.g. cube, atv, bushes, etc)
-	Cube ground("grass.jpg");
-	ground.Size = glm::vec3(100.0f, 0.0f, 100.0f);
-
-	Cube cube("rock02_2.jpg");
-	cube.Position = glm::vec3(0.0f, 0.5f, 5.0f);
-	Cube cube2("rock02_2.jpg");
-	cube2.Position = glm::vec3(0.0f, 0.5f, -5.0f);
-	Cube cube3("source.gif");
-	cube3.Position = glm::vec3(15.0f, 0.5f, 5.0f);
-	Cube cube4("source.gif");
-	cube4.Position = glm::vec3(15.0f, 0.5f, -5.0f);
+	Entity ground("models/ground/ground.obj");
+	ground.transform.Size = glm::vec3(10.0f, 0.0f, 10.0f);
 
 	Physics physics;
 
@@ -153,15 +145,11 @@ void App::run() {
 		// Update the physics of the player every tick
 		physics.update(player, ground, deltaTime);
 
-		shaderProgram.use();
-		ground.draw(shaderProgram, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &ground.Position, ground.Size, 0.0f);
-		cube.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &cube.Position, cube.Size, 0.0f);
-		cube2.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &cube2.Position, cube2.Size, 0.0f);
-		cube3.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &cube3.Position, cube3.Size, 0.0f);
-		cube4.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &cube4.Position, cube4.Size, 0.0f);
-
 		modelShader.use();
-		player.draw(modelShader, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &player.Position, player.Size, player.Yaw);
+		ground.draw(modelShader, camera, (float) SCR_WIDTH, (float) SCR_HEIGHT, &ground.transform.Position, ground.transform.Size, 0.0f);
+		//cube.draw(shaderProgram, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &cube.Position, cube.Size, 0.0f);
+
+		player.draw(modelShader, camera, (float)SCR_WIDTH, (float)SCR_HEIGHT, &player.transform.Position, player.transform.Size, player.Yaw);
 
 
 		// imgui
@@ -204,17 +192,17 @@ void App::run() {
 			{
 				ImGui::Spacing();
 
-				ImGui::Text("Cube");
-				ImGui::DragFloat3("Position##Cube", &player.Position.x, 0.1f);
-				ImGui::DragFloat3("Size##Cube", &player.Size.x, 0.1f);
+				ImGui::Text("Player");
+				ImGui::DragFloat3("Position##Player", &player.transform.Position.x, 0.1f);
+				ImGui::DragFloat3("Size##Player", &player.transform.Size.x, 0.1f);
 
 				ImGui::Spacing();
 				ImGui::Separator();
 				ImGui::Spacing();
 
 				ImGui::Text("Ground");
-				ImGui::DragFloat3("Position##Ground", &ground.Position.x, 0.1f);
-				ImGui::DragFloat3("Size##Ground", &ground.Size.x, 0.1f, 0.0f, FLT_MAX);
+				ImGui::DragFloat3("Position##Ground", &ground.transform.Position.x, 0.1f);
+				ImGui::DragFloat3("Size##Ground", &ground.transform.Size.x, 0.1f, 0.0f, FLT_MAX);
 
 				ImGui::Spacing();
 			}
@@ -362,9 +350,9 @@ void App::processInput(Player* player)
 	if (playerView) {
 		// Note: player's forward/backward speed is based on camera's velocity
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			player->Position += player->Forward * camera.getVelocity(deltaTime);
+			player->transform.Position += player->Forward * camera.getVelocity(deltaTime);
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			player->Position -= player->Forward * camera.getVelocity(deltaTime);
+			player->transform.Position -= player->Forward * camera.getVelocity(deltaTime);
 
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 			player->Yaw += camera.TurnSpeed;

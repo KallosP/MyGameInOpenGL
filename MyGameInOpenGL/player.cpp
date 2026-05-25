@@ -2,12 +2,8 @@
 #include "camera.h"
 #include "shader.h"
 
-// TODO: replace cube with real player/ATV model later
-// - make Player modular in that it receives a Model object 
-//   rather than Cube (make necessary changes to support this)
-Player::Player(Model& model) {
-	this->model = &model;
-}
+// Player constructor uses initializer list to initialize the model object of the Entity class (which Player inherits from)
+Player::Player(const string& modelPath) : Entity(modelPath) {}
 
 void Player::update() {
 	// Calculate/update forward vector of player
@@ -38,5 +34,5 @@ void Player::draw(Shader& shaderProgram, Camera& camera,
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), SCR_WIDTH / SCR_HEIGHT, 0.1f, 1000.0f);
 	shaderProgram.setMat4("projection", projection);
 
-	this->model->Draw(shaderProgram);
+	this->model.Draw(shaderProgram);
 }

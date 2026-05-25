@@ -1,9 +1,19 @@
 #pragma once
 #include "config.h"
+#include "transform.h"
+#include "model.h"
+
+class Camera;
 
 class Entity {
 	public:
-		glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 Size = glm::vec3(1.0f, 1.0f, 1.0f); //scale
+		Entity(const string& modelPath);
+
+		void draw(Shader& shaderProgram, Camera& camera, float SCR_WIDTH, float SCR_HEIGHT,
+			glm::vec3* pos, glm::vec3 scale, float yaw);
+
+		Transform transform;
+
+	protected:
+		Model model;
 };

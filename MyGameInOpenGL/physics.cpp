@@ -14,22 +14,22 @@ void Physics::applyGravity(Player& player, float dt) {
 	if (!player.isGrounded) {
 		player.rb.Velocity += gravity * dt;
 	}
-	player.Position += player.rb.Velocity * dt;
+	player.transform.Position += player.rb.Velocity * dt;
 }
 
 void Physics::resolveGroundCollision(Player& player, Entity& ground){
 	// Basic collision detection
-	float playerHalfHeight = player.Size.y * 0.5f;
-	float playerBottom = player.Position.y - playerHalfHeight;
+	float playerHalfHeight = player.transform.Size.y * 0.5f;
+	float playerBottom = player.transform.Position.y - playerHalfHeight;
 
-	float groundHalfHeight = ground.Size.y * 0.5f;
-	float groundTop = ground.Size.y + groundHalfHeight;
+	float groundHalfHeight = ground.transform.Size.y * 0.5f;
+	float groundTop = ground.transform.Size.y + groundHalfHeight;
 
 	// Not falling
 	if (playerBottom <= groundTop) {
 		// ensure the point on the player that's on bottom/collides with ground
 		// is the bottom, not the center
-		player.Position.y = playerHalfHeight + groundTop;
+		player.transform.Position.y = playerHalfHeight + groundTop;
 		if (player.rb.Velocity.y < 0.0f) {
 			// bounce
 			player.rb.Velocity.y *= -restitution; 

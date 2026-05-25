@@ -203,6 +203,7 @@
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="terrain.h" />
     <ClInclude Include="texture_generator.h" />
+    <ClInclude Include="transform.h" />
     <ClInclude Include="triangle_list.h" />
   </ItemGroup>
   <ItemGroup>

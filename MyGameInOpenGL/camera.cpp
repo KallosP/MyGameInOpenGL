@@ -70,7 +70,7 @@ void Camera::follow(Player* player, float dt) {
 	// always needs to face same direction as player's front (i.e. forward vector),
 	// multiplying by a float (CamDistance) sets how far back the camera is from the
 	// player
-	glm::vec3 camTargetPos = (player->Position - (player->Forward * CamDistance) + glm::vec3(0.0f, CamHeight, 0.0f));
+	glm::vec3 camTargetPos = (player->transform.Position - (player->Forward * CamDistance) + glm::vec3(0.0f, CamHeight, 0.0f));
 
 	// exponential linear interpolation (easing) to smooth out camera movement, t is the interpolation factor
 	// -> exp(-smoothSpeed * dt) produces a value that starts near 1 and decays toward 0 over time
@@ -79,7 +79,7 @@ void Camera::follow(Player* player, float dt) {
 	// glm::mix = linear interpolation, is saying "move the camera's position toward the target position by a factor of t"
 	// note that t goes from near 0 and approaches 1
 	Position = glm::mix(Position, camTargetPos, t);
-	Front = glm::normalize(player->Position - Position);
+	Front = glm::normalize(player->transform.Position - Position);
 	// must reset up vector to be world up vector, otherwise residual
 	// pitch from free cam will tilt camera in player view
 	Up = glm::vec3(0.0f, 1.0f, 0.0f);
